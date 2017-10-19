@@ -1,0 +1,34 @@
+#!/bin/sh
+
+list=`git status -s $1 | rg -e "^.[^-\s]" | awk '{print $2}'`
+
+check() {
+  opt=""
+  while [ "$opt" != "n" ]; do
+    clear
+    git diff $i
+    printf "File '$i' - (a/e/r/d/n): "
+    read opt
+    case $opt in
+      "a")
+        git add $i
+        opt="n"
+      ;;
+      "e")
+        vim $i
+      ;;
+      "r")
+        git checkout -- $i
+        opt="n"
+      ;;
+     "d") 
+        git rm $i
+        opt="n"
+    esac
+  done
+}
+
+
+for i in $list; do
+  check $i
+done

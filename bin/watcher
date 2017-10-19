@@ -1,0 +1,19 @@
+#/bin/sh
+
+DIR_OBS=$1
+shift
+SCRIPT="$@"
+
+trap "exit" SIGHUP SIGINT SIGTERM
+
+echo "-----------------------------------------------------"
+$SCRIPT
+echo "-----------------------------------------------------"
+echo "Waiting... "
+
+while fswatch -1 --exclude .git $DIR_OBS; do
+    echo "-----------------------------------------------------"
+    $SCRIPT
+    echo "-----------------------------------------------------"
+    echo "Waiting... "
+done

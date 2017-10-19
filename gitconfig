@@ -1,0 +1,15 @@
+[user]
+	name = Marcos Reis
+
+[alias]
+    tree = log --graph --decorate --pretty=oneline --abbrev-commit
+    files = show --name-only
+    t = log --graph --decorate --pretty=oneline --abbrev-commit -n20
+    s = status -s
+
+[core]
+    editor = vim
+    fileMode = false
+
+[color]
+	ui = auto
