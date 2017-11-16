@@ -67,14 +67,18 @@ Plugin 'sheerun/vim-polyglot'
 Plugin 'tpope/vim-commentary'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'junegunn/fzf.vim'
+Plugin 'jremmen/vim-ripgrep'
+Plugin 'tpope/vim-fugitive'
 call vundle#end()
 filetype plugin indent on
 
 " YCM
 let g:ycm_enable_diagnostic_signs = 0
+let g:ycm_extra_conf_globlist = ['~/work/*']
 nmap ;t :YcmCompleter GetType<CR>
 nmap ;g :YcmCompleter GoTo<CR>
-let g:ycm_extra_conf_globlist = ['~/work/*']
+nmap ;u :YcmForceCompileAndDiagnostics<CR>
+nmap ;r :YcmRestartServer<CR>
 
 " make YCM compatible with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -108,3 +112,8 @@ autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
 nmap ;; :Files<CR>
 set rtp+=/usr/local/opt/fzf
 set rtp+=~/.fzf
+
+" Quick fix window
+nmap ;l :cnext<CR>
+nmap ;k :cprev<CR>
+
