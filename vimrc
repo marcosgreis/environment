@@ -15,9 +15,6 @@ set tabstop=4
 set shiftwidth=4
 set nu
 
-"set smarttab
-"set smartindent
-
 map <F9> :!/usr/local/bin/clang-format<cr>
 map <F10> mWggVG<F9>`Wzz<CR>
 
@@ -38,7 +35,7 @@ nnoremap <silent> ZH Hzz
 nnoremap <silent> ZL Lzz
 nnoremap <silent> ZM :tabmove -1<CR>
 nnoremap <silent> zm :tabmove +1<CR>
-map ZZ <nop>
+nnoremap ZZ <nop>
 
 " no backup files
 set nobackup
@@ -117,3 +114,11 @@ set rtp+=~/.fzf
 nmap ;l :cnext<CR>
 nmap ;k :cprev<CR>
 
+" Fix colors
+highlight YcmErrorLine ctermbg=052
+highlight YcmErrorSign ctermbg=052
+highlight YcmErrorSection ctermbg=052
+highlight YcmWarningLine ctermbg=052
+highlight YcmWarningSign ctermbg=052
+highlight YcmWarningSection ctermbg=052
+highlight Search ctermbg=178

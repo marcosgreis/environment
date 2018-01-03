@@ -12,6 +12,8 @@ git_color()
 
     if [[ $git_status =~ "Changes to be committed" ]]; then
         echo -e "\033[0;32m" # green
+    elif [[ $git_status =~ "have diverged" ]]; then
+        echo -e "\033[0;37m" # gray
     elif [[ $git_status =~ "Your branch is ahead of" ]]; then
         echo -e "\033[0;37m" # gray
     elif [[ ! $git_status =~ "working tree clean" ]]; then

@@ -3,7 +3,7 @@
 function check ()
 {
     if [ $1 != 0 ]; then
-        echo ">>> =("
+        header "=("
         sleep 1
         exit 1
     fi
