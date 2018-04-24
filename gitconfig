@@ -5,6 +5,7 @@
     tree = log --graph --decorate --pretty=oneline --abbrev-commit
     files = show --name-only
     t = log --graph --decorate --pretty=oneline --abbrev-commit -n20
+    ta = log --graph --decorate --pretty=oneline --abbrev-commit -n30 --all
     s = status -s
 
 [core]

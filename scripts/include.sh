@@ -7,4 +7,5 @@ function check ()
         sleep 1
         exit 1
     fi
+    sleep 0.2
 }

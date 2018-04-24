@@ -1,0 +1,22 @@
+#!/usr/local/bin/python
+
+import sys
+from subprocess import call
+
+inputString = sys.argv[1]
+command = sys.argv[2]
+cmdStr = "'" + command + "'"
+args = ""
+
+if len(sys.argv) > 3:
+    args = sys.argv[3:]
+    cmdStr =  cmdStr[:-1] + " " + " ".join(args) + "'"
+
+call(["header", "Searching for '" + inputString + "' to run "  + cmdStr])
+
+while 1:
+    line = sys.stdin.readline()
+    if inputString in line:
+        call(["header", "Found '" + inputString + "'! Running " + cmdStr])
+        call([command] + args)
+
