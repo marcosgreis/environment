@@ -1,0 +1,6 @@
+#/bin/sh
+
+TITLE="$1"
+TEXT="$2"
+
+reattach-to-user-namespace osascript -e "display notification \"$TEXT\" with title \"$TITLE\""
