@@ -1,0 +1,18 @@
+#/bin/sh
+
+. ~/environment/scripts/include.sh
+
+OUTPUT_FILE=~/work/work-log
+
+INPUT="$@"
+
+DATE="$(date +%Y-%m-%dT%H:%M:%S)"
+
+if [ "$INPUT" != "" ]; then
+    echo "$DATE  TEXT-ENTRY - $INPUT" >> ${OUTPUT_FILE}
+else
+    for dir in `cat ~/work/.dirs-to-log`; do
+        cd $dir
+        echo "${DATE}  $dir - $(git rev-parse --abbrev-ref HEAD)" >> ${OUTPUT_FILE}
+    done
+fi
