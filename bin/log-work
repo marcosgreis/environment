@@ -3,16 +3,26 @@
 . ~/environment/scripts/include.sh
 
 OUTPUT_FILE=~/work/work-log
+LAST_BRANCH_FILE=~/work/.work-log-last-branch
 
 INPUT="$@"
 
 DATE="$(date +%Y-%m-%dT%H:%M:%S)"
 
 if [ "$INPUT" != "" ]; then
-    echo "$DATE  TEXT-ENTRY - $INPUT" >> ${OUTPUT_FILE}
+    echo "$DATE - TEXT-ENTRY - $INPUT" >> ${OUTPUT_FILE}
 else
     for dir in `cat ~/work/.dirs-to-log`; do
         cd $dir
-        echo "${DATE}  $dir - $(git rev-parse --abbrev-ref HEAD)" >> ${OUTPUT_FILE}
+
+        LAST_BRANCH_CUR_FILE="${LAST_BRANCH_FILE}-$(basename $dir)"
+
+        CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+        LAST_BRANCH=$(cat ${LAST_BRANCH_CUR_FILE})
+
+        if [ "$CURRENT_BRANCH" != "$LAST_BRANCH" ]; then
+            echo "${DATE} - $dir - ${CURRENT_BRANCH}" >> ${OUTPUT_FILE}
+            echo ${CURRENT_BRANCH} > $LAST_BRANCH_CUR_FILE
+        fi
     done
 fi

@@ -41,7 +41,7 @@ set_prompt()
 
 #export TERM=xterm-256color
 
-export PATH=~/environment/bin:$PATH
+export PATH=~/environment/bin:/opt/local/bin:$PATH
 
 source ~/environment/scripts/git-completion.bash
 source ~/environment/scripts/git-prompt.sh

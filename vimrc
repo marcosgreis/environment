@@ -69,6 +69,11 @@ Plugin 'tpope/vim-fugitive'
 call vundle#end()
 filetype plugin indent on
 
+" EasyMotion
+map ff <Plug>(easymotion-f)
+map FF <Plug>(easymotion-F)
+map <Leader> <Plug>(easymotion-prefix)
+
 " YCM
 let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_extra_conf_globlist = ['~/work/*']
@@ -107,6 +112,7 @@ autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
 
 " Fuzzy finder
 nmap ;; :Files<CR>
+nmap ;b :Buffer<CR>
 set rtp+=/usr/local/opt/fzf
 set rtp+=~/.fzf
 

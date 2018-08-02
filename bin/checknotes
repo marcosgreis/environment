@@ -1,0 +1,13 @@
+#!/bin/sh
+
+MGR_COUNT=`rg MGR | wc -l`
+MGR_COUNT=`echo $MGR_COUNT`
+
+COLOR="\033[0;31m" #red
+
+if [ "${MGR_COUNT}" == "0" ]; then
+    COLOR="\033[0;32m" #green
+    MGR_COUNT=NO
+fi
+
+echo "${COLOR}There are $MGR_COUNT MGR notes in code\033[0;0m"
