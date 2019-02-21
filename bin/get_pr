@@ -1,0 +1,6 @@
+#/bin/bash
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+remote="$(git remote get-url origin | sed 's/:/\//g' | sed 's/git@/https:\/\//g' | sed 's/\.git//g')"
+
+echo "${remote}/pull/new/${branch}" | reattach-to-user-namespace pbcopy

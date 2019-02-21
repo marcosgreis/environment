@@ -15,7 +15,8 @@ set tabstop=4
 set shiftwidth=4
 set nu
 
-map <F8> :!/usr/local/bin/clang-format<cr>
+" formatting
+map <F8> :!clang-format<cr>
 map <F9> mW[[va{<F8>`Wzz<cr>
 map <F10> mWggVG<F8>`Wzz<CR>
 
