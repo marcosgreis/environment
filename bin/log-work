@@ -7,7 +7,7 @@ LAST_BRANCH_FILE=~/work/.work-log-last-branch
 
 INPUT="$@"
 
-DATE="$(date +%Y-%m-%dT%H:%M:%S)"
+DATE="$(date +%Y-%m-%dT%H:%M)"
 
 if [ "$INPUT" != "" ]; then
     echo "$DATE - TEXT-ENTRY - $INPUT" >> ${OUTPUT_FILE}

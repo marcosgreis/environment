@@ -3,8 +3,11 @@ if [ "$TMUX" == "" ]; then
 fi
 
 alias ll='ls -l'
-alias f='find . -name'
 alias vi='vim'
+
+function f() {
+    find . -name "*${1}*"
+}
 
 git_color()
 {
@@ -41,6 +44,7 @@ set_prompt()
 
 #export TERM=xterm-256color
 
+export EDITOR=/usr/local/bin/vim
 export PATH=~/environment/bin:/opt/local/bin:$PATH
 
 source ~/environment/scripts/git-completion.bash
@@ -49,5 +53,15 @@ source ~/environment/scripts/git-prompt.sh
 if [ -f ~/environment/extra/bashrc ]; then
     source ~/environment/extra/bashrc
 fi
+
+alias notecheck=checknotes
+alias workcheck=checkwork
+
+alias gcrev='git commit -m"Code review"'
+alias gcam='git commit --amend'
+alias gcwip='git commit -m"WIP"'
+alias gc='git commit'
+alias gt='git t'
+alias gs='git s'
 
 set_prompt

@@ -15,11 +15,12 @@ set tabstop=4
 set shiftwidth=4
 set nu
 
-map <F9> :!/usr/local/bin/clang-format<cr>
-map <F10> mWggVG<F9>`Wzz<CR>
+map <F8> :!/usr/local/bin/clang-format<cr>
+map <F9> mW[[va{<F8>`Wzz<cr>
+map <F10> mWggVG<F8>`Wzz<CR>
 
 " tabs
-nnoremap zc :tabnext<CR>
+nnoremap zv :tabnext<CR>
 nnoremap zx :tabprev<CR>
 nnoremap zn :tabedit
 
@@ -119,6 +120,9 @@ set rtp+=~/.fzf
 " Quick fix window
 nmap ;l :cnext<CR>
 nmap ;k :cprev<CR>
+
+" Quick search under cursor
+nmap ;s :Rg <cword><CR>
 
 " Fix colors
 highlight YcmErrorLine ctermbg=052
