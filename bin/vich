@@ -1,0 +1,5 @@
+#!/bin/bash
+
+SCRIPT_TO_OPEN=$1
+
+vim $(which ${SCRIPT_TO_OPEN})

@@ -2,8 +2,9 @@ if [ "$TMUX" == "" ]; then
     tmux
 fi
 
+alias ls='ls -G'
 alias ll='ls -l'
-alias vi='vim'
+alias vi='~/apps/bin/vim'
 
 function f() {
     find . -name "*${1}*"
@@ -42,6 +43,12 @@ set_prompt()
     export PS1
 }
 
+function virg() {
+    files=`rg $1 -l`
+    vi -p $files
+}
+
+
 #export TERM=xterm-256color
 
 export EDITOR=/usr/local/bin/vim
@@ -57,11 +64,16 @@ fi
 alias notecheck=checknotes
 alias workcheck=checkwork
 
-alias gcrev='git commit -m"Code review"'
-alias gcam='git commit --amend'
-alias gcwip='git commit -m"WIP"'
-alias gc='git commit'
+alias gc='echo "Did you run gpc?"; read; git commit'
+alias gcrev='gc -m"Code review"'
+alias gcam='gc --amend'
+alias gcwip='gc -m"WIP"'
 alias gt='git t'
 alias gs='git s'
+alias grm='git fetch --all; git rebase --interactive upstream/master'
 
 set_prompt
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+export FZF_DEFAULT_COMMAND='rg --files .'

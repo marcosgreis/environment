@@ -4,27 +4,7 @@ let mapleader = ','
 
 "set t_Co=256
 
-set nocompatible
-set backspace=2
-set ruler
-set laststatus=2
-
-" auto-formating
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set nu
-
-" formatting
-map <F8> :!clang-format<cr>
-map <F9> mW[[va{<F8>`Wzz<cr>
-map <F10> mWggVG<F8>`Wzz<CR>
-
-" tabs
-nnoremap zv :tabnext<CR>
-nnoremap zx :tabprev<CR>
-nnoremap zn :tabedit
-
+" z commands
 nnoremap <silent> z<Up> :wincmd k<CR>
 nnoremap <silent> z<Down> :wincmd j<CR>
 nnoremap <silent> z<Left> :wincmd h<CR>
@@ -38,18 +18,14 @@ nnoremap <silent> ZL Lzz
 nnoremap <silent> ZM :tabmove -1<CR>
 nnoremap <silent> zm :tabmove +1<CR>
 nnoremap ZZ <nop>
+inoremap jk <Esc>
+inoremap <C-c> <Esc>
 
-" no backup files
-set nobackup
-set nowb
-set noswapfile
+" tabs
+nnoremap zv :tabnext<CR>
+nnoremap zx :tabprev<CR>
+nnoremap zn :tabedit
 
-" set constants
-let author = "Marcos Reis"
-
-" Highlight search
-set hlsearch
-nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
 
 " Plugins
 filetype off
@@ -68,8 +44,41 @@ Plugin 'easymotion/vim-easymotion'
 Plugin 'junegunn/fzf.vim'
 Plugin 'jremmen/vim-ripgrep'
 Plugin 'tpope/vim-fugitive'
+"Plugin 'artur-shaik/vim-javacomplete2'
+" Plugin 'google/vim-maktaba'
+" Plugin 'bazelbuild/vim-bazel'
+Plugin 'grailbio/bazel-compilation-database'
+
 call vundle#end()
 filetype plugin indent on
+
+" auto-formating
+set nocompatible
+set backspace=2
+set ruler
+set laststatus=2
+
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set nu
+
+" formatting
+map <F8> :!clang-format -style=file<cr>
+map <F9> mW[[va{<F8>`Wzz<cr>
+map <F10> mWggVG<F8>`Wzz<CR>
+
+" no backup files
+set nobackup
+set nowb
+set noswapfile
+
+" set constants
+let author = "Marcos Reis"
+
+" Highlight search
+set hlsearch
+nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
 
 " EasyMotion
 map ff <Plug>(easymotion-f)
@@ -78,11 +87,14 @@ map <Leader> <Plug>(easymotion-prefix)
 
 " YCM
 let g:ycm_enable_diagnostic_signs = 0
-let g:ycm_extra_conf_globlist = ['~/work/*']
+let g:ycm_extra_conf_globlist = ['~/*']
+let g:ycm_global_ycm_extra_conf = '~/work/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/bazel-compilation-database/.ycm_extra_conf.py'
 nmap ;t :YcmCompleter GetType<CR>
 nmap ;g :YcmCompleter GoTo<CR>
 nmap ;u :YcmForceCompileAndDiagnostics<CR>
 nmap ;r :YcmRestartServer<CR>
+nmap ;f :YcmCompleter FixIt<CR>
 
 " make YCM compatible with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -94,19 +106,21 @@ let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
+" My snippets
+
 " NERDTree configs
 map za :NERDTreeToggle<CR>
 
 " Lightline
-let g:lightline = {
-            \    'active': {
-            \      'left': [['mode', 'paste'], ['filename', 'modified']],
-            \      'right': [['lineinfo'], ['percent'], ['readonly']]
-            \    },
-            \    'component_type': {
-            \      'readonly': 'error',
-            \    }
-            \}
+" let g:lightline = {
+"             \    'active': {
+"             \      'left': [['mode', 'paste'], ['filename', 'modified']],
+"             \      'right': [['lineinfo'], ['percent'], ['readonly']]
+"             \    },
+"             \    'component_type': {
+"             \      'readonly': 'error',
+"             \    }
+"             \}
 
 
 " Commentary
@@ -124,6 +138,13 @@ nmap ;k :cprev<CR>
 
 " Quick search under cursor
 nmap ;s :Rg <cword><CR>
+
+" java stuff
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+
+" Force highlights
+autocmd BufNewFile,BufRead *.mm   set syntax=objc
+autocmd BufNewFile,BufRead *.BUILD   set syntax=bzl
 
 " Fix colors
 highlight YcmErrorLine ctermbg=052

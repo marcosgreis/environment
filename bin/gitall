@@ -1,6 +1,6 @@
 #!/bin/sh
 
-list=`git status -s $1 | rg -e "^.[^-\s]" | awk '{print $2}'`
+list=`git status -s $1 | rg -e "^.[^-\s]" | awk '{print $NF}'`
 
 check() {
   opt=""

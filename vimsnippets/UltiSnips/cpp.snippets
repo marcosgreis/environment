@@ -1,0 +1,26 @@
+priority -50
+
+extends c
+
+priority -45
+
+snippet plog "printf log"
+printf("MGR - `!p snip.rv = snip.basename`::%s - $1", __FUNCTION__);
+endsnippet
+
+snippet clog "cout log"
+std::cout << "MGR - `!p snip.rv = snip.basename`::" << __FUNCTION__ << " 1 - $1" << std::endl;
+endsnippet
+
+snippet testaaa "AAA test"
+TEST(${1:functionTested}, ${2:conditionBeingTested}_${3:expectedResult})
+{
+	// Arrange
+	$0
+
+	// Act
+
+	// Assert
+	EXPECT_THAT(false, Eq(true));
+}
+endsnippet
