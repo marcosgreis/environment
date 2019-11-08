@@ -4,7 +4,7 @@ fi
 
 alias ls='ls -G'
 alias ll='ls -l'
-alias vi='~/apps/bin/vim'
+alias vi='vim'
 
 function f() {
     find . -name "*${1}*"
@@ -44,7 +44,7 @@ set_prompt()
 }
 
 function virg() {
-    files=`rg $1 -l`
+    files="`rg $1 -l`"
     vi -p $files
 }
 
@@ -52,10 +52,12 @@ function virg() {
 #export TERM=xterm-256color
 
 export EDITOR=/usr/local/bin/vim
-export PATH=~/environment/bin:/opt/local/bin:$PATH
+export PATH=~/environment/bin:/opt/local/bin:~/bin:$PATH
 
 source ~/environment/scripts/git-completion.bash
 source ~/environment/scripts/git-prompt.sh
+
+source ~/.bazel/bin/bazel-complete.bash
 
 if [ -f ~/environment/extra/bashrc ]; then
     source ~/environment/extra/bashrc
@@ -64,10 +66,29 @@ fi
 alias notecheck=checknotes
 alias workcheck=checkwork
 
-alias gc='echo "Did you run gpc?"; read; git commit'
+function format_check()
+{
+    echo "Do you want to run formatter? (y/N)"
+    read VALUE
+    case $VALUE in
+        "Y" )
+            formatter
+            ;;
+        "y" )
+            formatter
+            ;;
+    esac
+    echo
+    echo "--------------------------"
+    git s; read
+    gitall
+}
+
+alias gc='format_check; git commit'
 alias gcrev='gc -m"Code review"'
 alias gcam='gc --amend'
-alias gcwip='gc -m"WIP"'
+alias gcwip='git commit -m"WIP"'
+alias gcfix='gc -m"Fix"'
 alias gt='git t'
 alias gs='git s'
 alias grm='git fetch --all; git rebase --interactive upstream/master'
