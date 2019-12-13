@@ -24,3 +24,16 @@ TEST(${1:functionTested}, ${2:conditionBeingTested}_${3:expectedResult})
 	EXPECT_THAT(false, Eq(true));
 }
 endsnippet
+
+snippet testbdd "BDD test"
+TEST(${1:functionTested}, ${2:conditionBeingTested}_${3:expectedResult})
+{
+	// Given
+	$0
+
+	// When
+
+	// Then
+	EXPECT_THAT(false, Eq(true));
+}
+endsnippet

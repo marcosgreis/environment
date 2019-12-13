@@ -91,7 +91,7 @@ alias gcwip='git commit -m"WIP"'
 alias gcfix='gc -m"Fix"'
 alias gt='git t'
 alias gs='git s'
-alias grm='git fetch --all; git rebase --interactive upstream/master'
+alias grm='git fetch --all; git rebase --interactive origin/master'
 
 set_prompt
 

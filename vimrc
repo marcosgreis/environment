@@ -18,7 +18,6 @@ nnoremap <silent> ZL Lzz
 nnoremap <silent> ZM :tabmove -1<CR>
 nnoremap <silent> zm :tabmove +1<CR>
 nnoremap ZZ <nop>
-inoremap jk <Esc>
 inoremap <C-c> <Esc>
 
 " tabs
@@ -37,7 +36,6 @@ Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'scrooloose/nerdtree'
-"Plugin 'itchyny/lightline.vim'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'tpope/vim-commentary'
 Plugin 'easymotion/vim-easymotion'
@@ -45,12 +43,16 @@ Plugin 'junegunn/fzf.vim'
 Plugin 'jremmen/vim-ripgrep'
 Plugin 'tpope/vim-fugitive'
 "Plugin 'artur-shaik/vim-javacomplete2'
-" Plugin 'google/vim-maktaba'
 " Plugin 'bazelbuild/vim-bazel'
-Plugin 'grailbio/bazel-compilation-database'
+
+" Plugin 'grailbio/bazel-compilation-database'
+Plugin 'itchyny/lightline.vim'
+Plugin 'majutsushi/tagbar'
 
 call vundle#end()
 filetype plugin indent on
+
+set runtimepath+=~/.vim/my-snippets/
 
 " auto-formating
 set nocompatible
@@ -89,7 +91,7 @@ map <Leader> <Plug>(easymotion-prefix)
 let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_extra_conf_globlist = ['~/*']
 let g:ycm_global_ycm_extra_conf = '~/work/.ycm_extra_conf.py'
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/bazel-compilation-database/.ycm_extra_conf.py'
+" let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/bazel-compilation-database/.ycm_extra_conf.py'
 nmap ;t :YcmCompleter GetType<CR>
 nmap ;g :YcmCompleter GoTo<CR>
 nmap ;u :YcmForceCompileAndDiagnostics<CR>
@@ -112,16 +114,24 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 map za :NERDTreeToggle<CR>
 
 " Lightline
-" let g:lightline = {
-"             \    'active': {
-"             \      'left': [['mode', 'paste'], ['filename', 'modified']],
-"             \      'right': [['lineinfo'], ['percent'], ['readonly']]
-"             \    },
-"             \    'component_type': {
-"             \      'readonly': 'error',
-"             \    }
-"             \}
+let g:lightline = {
+            \    'active': {
+            \      'left': [['mode', 'paste'], ['relativepath', 'modified']],
+            \      'right': [['lineinfo'], ['percent'], ['readonly'], ['filetype'], ['ycmCount']]
+            \    },
+            \    'component_function': {
+            \       'ycmCount': 'MyYcmCount'
+            \    }
+            \}
 
+function! MyYcmCount()
+    if &filetype !=# 'cpp'
+        return ''
+    endif
+    let eCount = youcompleteme#GetErrorCount()
+    let wCount = youcompleteme#GetWarningCount()
+    return 'E:' . eCount . ' W:' . wCount . ' |'
+endfunction
 
 " Commentary
 autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
@@ -153,4 +163,4 @@ highlight YcmErrorSection ctermbg=052
 highlight YcmWarningLine ctermbg=052
 highlight YcmWarningSign ctermbg=052
 highlight YcmWarningSection ctermbg=052
-highlight Search ctermbg=178
+highlight Search cterm=NONE ctermfg=grey ctermbg=054

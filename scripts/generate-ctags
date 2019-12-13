@@ -1,0 +1,2 @@
+#using universal ctags
+/usr/local/bin/ctags -R --exclude="bazel*" --languages=c++
