@@ -4,7 +4,7 @@ fi
 
 alias ls='ls -G'
 alias ll='ls -l'
-alias vi='vim'
+alias vi='nvim -u ~/.vimrc'
 
 function f() {
     find . -name "*${1}*"
@@ -68,6 +68,7 @@ alias workcheck=checkwork
 
 function format_check()
 {
+    checknotes
     echo "Do you want to run formatter? (y/N)"
     read VALUE
     case $VALUE in

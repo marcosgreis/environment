@@ -30,6 +30,8 @@ nnoremap zn :tabedit
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
+
+" - Stable
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'ervandew/supertab'
 Plugin 'SirVer/ultisnips'
@@ -42,11 +44,14 @@ Plugin 'easymotion/vim-easymotion'
 Plugin 'junegunn/fzf.vim'
 Plugin 'jremmen/vim-ripgrep'
 Plugin 'tpope/vim-fugitive'
-"Plugin 'artur-shaik/vim-javacomplete2'
-" Plugin 'bazelbuild/vim-bazel'
+Plugin 'itchyny/lightline.vim'
+Plugin 'morhetz/gruvbox'
+Plugin 'r0mai/vim-djinni'
+
+" - Experiments
 
 " Plugin 'grailbio/bazel-compilation-database'
-Plugin 'itchyny/lightline.vim'
+
 Plugin 'majutsushi/tagbar'
 
 call vundle#end()
@@ -65,9 +70,15 @@ set tabstop=4
 set shiftwidth=4
 set nu
 
-" formatting
-map <F8> :!clang-format -style=file<cr>
+" F-keys
+" - Toggle outline
+map <F2> :TagbarToggle<cr>
+" - Run formatting on selection
+" map <F8> :!clang-format -style=file<cr>
+map <F8> :!~/work/capi/bazel-capi/external/llvm_toolchain/bin/clang-format -style=file<cr>
+" - Run formatting on method
 map <F9> mW[[va{<F8>`Wzz<cr>
+" - Run formatting on fike
 map <F10> mWggVG<F8>`Wzz<CR>
 
 " no backup files
@@ -80,6 +91,7 @@ let author = "Marcos Reis"
 
 " Highlight search
 set hlsearch
+set incsearch!
 nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
 
 " EasyMotion
@@ -125,12 +137,12 @@ let g:lightline = {
             \}
 
 function! MyYcmCount()
-    if &filetype !=# 'cpp'
+    " if &filetype !=# 'cpp'
         return ''
-    endif
-    let eCount = youcompleteme#GetErrorCount()
-    let wCount = youcompleteme#GetWarningCount()
-    return 'E:' . eCount . ' W:' . wCount . ' |'
+    " endif
+    " let eCount = youcompleteme#GetErrorCount()
+    " let wCount = youcompleteme#GetWarningCount()
+    " return 'E:' . eCount . ' W:' . wCount . ' |'
 endfunction
 
 " Commentary
@@ -157,10 +169,13 @@ autocmd BufNewFile,BufRead *.mm   set syntax=objc
 autocmd BufNewFile,BufRead *.BUILD   set syntax=bzl
 
 " Fix colors
+let g:gruvbox_bold=0
+set background=dark
+colorscheme gruvbox
 highlight YcmErrorLine ctermbg=052
 highlight YcmErrorSign ctermbg=052
 highlight YcmErrorSection ctermbg=052
 highlight YcmWarningLine ctermbg=052
 highlight YcmWarningSign ctermbg=052
 highlight YcmWarningSection ctermbg=052
-highlight Search cterm=NONE ctermfg=grey ctermbg=054
+" highlight Search cterm=NONE ctermfg=grey ctermbg=054
