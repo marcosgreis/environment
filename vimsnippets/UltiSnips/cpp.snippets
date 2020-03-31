@@ -5,11 +5,11 @@ extends c
 priority -45
 
 snippet plog "printf log"
-printf("MGR - `!p snip.rv = snip.basename`::%s - $1", __FUNCTION__);
+printf("MGR - `!p snip.rv = snip.basename`::%s - $0\n", __FUNCTION__);
 endsnippet
 
 snippet clog "cout log"
-std::cout << "MGR - `!p snip.rv = snip.basename`::" << __FUNCTION__ << " 1 - $1" << std::endl;
+std::cout << "MGR - `!p snip.rv = snip.basename`::" << __FUNCTION__ << " 1 - $0" << std::endl;
 endsnippet
 
 snippet testaaa "AAA test"

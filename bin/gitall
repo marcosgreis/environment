@@ -1,34 +1,49 @@
-#!/bin/sh
+#!/bin/bash
 
-list=`git status -s $1 | rg -e "^.[^-\s]" | awk '{print $NF}'`
+# list=`git status -s $1 | rg -e "^.[^-\s]" | awk '{print $NF}'`
+# list=`git status -s $1 | rg -e "^.[^-\s]" | awk '{print $NF}'`
+DIR="$(git rev-parse --show-toplevel)"
+
+cd $DIR
 
 check() {
   opt=""
+  FILE="$1"
   while [ "$opt" != "n" ]; do
     clear
-    git diff $i
-    printf "File '$i' - (a/e/r/d/n): "
+    git diff "$FILE"
+    printf "File '$FILE' - (a/e/R/d/n): "
     read opt
     case $opt in
       "a")
-        git add $i
+        git add $FILE
         opt="n"
       ;;
       "e")
-        vim $i
+        vim $FILE
       ;;
-      "r")
-        git checkout -- $i
+      "R")
+        git checkout -- $FILE
         opt="n"
       ;;
      "d") 
-        git rm $i
+        git rm $FILE
         opt="n"
     esac
   done
 }
 
 
-for i in $list; do
-  check $i
+list_tracked="$(git diff --diff-filter=d --name-only)"
+list_untracked="$(git ls-files --others --exclude-standard)"
+IFS="
+"
+for i in $list_tracked; do
+  check "$i"
 done
+
+for i in $list_untracked; do
+  check "$i"
+done
+
+cd -
