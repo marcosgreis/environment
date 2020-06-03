@@ -1,0 +1,6 @@
+#!/bin/bash
+
+TITLE="$1"
+MSG="$2"
+
+osascript -e "display alert \"$TITLE\" message \"$MSG\""

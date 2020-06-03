@@ -115,6 +115,7 @@ alias gcfix='gc -m"Fix"; push_check'
 alias gt='git t'
 alias gs='git s'
 alias grm='git fetch --all; git rebase --interactive origin/master'
+alias grd='git fetch --all; git rebase --interactive origin/develop'
 
 function gtm()
 {
@@ -127,3 +128,4 @@ set_prompt
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 export FZF_DEFAULT_COMMAND='rg --files .'
+export HISTCONTROL=ignoredups

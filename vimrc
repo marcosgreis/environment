@@ -4,6 +4,10 @@ let mapleader = ','
 
 "set t_Co=256
 
+" Emojis
+" 🤔
+imap <C-v>ut <C-v>U0001F914
+
 " z commands
 nnoremap <silent> z<Up> :wincmd k<CR>
 nnoremap <silent> z<Down> :wincmd j<CR>
@@ -47,12 +51,9 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'itchyny/lightline.vim'
 Plugin 'morhetz/gruvbox'
 Plugin 'r0mai/vim-djinni'
-
-" - Experiments
+Plugin 'majutsushi/tagbar'
 
 " Plugin 'grailbio/bazel-compilation-database'
-
-Plugin 'majutsushi/tagbar'
 
 call vundle#end()
 filetype plugin indent on
@@ -74,8 +75,8 @@ set nu
 " - Toggle outline
 map <F2> :TagbarToggle<cr>
 " - Run formatting on selection
-" map <F8> :!clang-format -style=file<cr>
-map <F8> :!~/work/capi/bazel-capi/external/llvm_toolchain/bin/clang-format -style=file<cr>
+map <F8> :!clang-format -style=file<cr>
+" map <F8> :!~/work/capi/bazel-capi/external/llvm_toolchain/bin/clang-format -style=file<cr>
 " - Run formatting on method
 map <F9> mW[[va{<F8>`Wzz<cr>
 " - Run formatting on fike
@@ -91,8 +92,8 @@ let author = "Marcos Reis"
 
 " Highlight search
 set hlsearch
-set incsearch!
 nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+set noincsearch
 
 " EasyMotion
 map ff <Plug>(easymotion-f)
@@ -179,3 +180,8 @@ highlight YcmWarningLine ctermbg=052
 highlight YcmWarningSign ctermbg=052
 highlight YcmWarningSection ctermbg=052
 " highlight Search cterm=NONE ctermfg=grey ctermbg=054
+
+" NeoVim adjusts
+set guicursor=
+
+command JsonPretty %!jq
