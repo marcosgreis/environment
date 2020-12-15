@@ -37,3 +37,42 @@ TEST(${1:functionTested}, ${2:conditionBeingTested}_${3:expectedResult})
 	EXPECT_THAT(false, Eq(true));
 }
 endsnippet
+
+snippet testfixture "Fixture test"
+TEST_F(`!p snip.rv = snip.basename`${1:Fixture}, ${2:conditionBeingTested}_${3:expectedResult})
+{
+	// Arrange
+	$0
+
+	// Act
+
+	// Assert
+	EXPECT_THAT(false, Eq(true));
+}
+endsnippet
+
+snippet testfile "Test file"
+#include <gmock/gmock.h>
+#include "${0:includeFile}"
+
+using namespace testing;
+
+class `!p snip.rv = snip.basename`Fixture : public Test {
+protected:
+    virtual void SetUp() {}
+
+	std::shared_ptr<${1:ClassToBeTested}> create() {
+		return std::make_shared<$1>();
+	}
+};
+
+TEST_F(`!p snip.rv = snip.basename`Fixture, conditionBeingTested_expectedResult)
+{
+    // Arrange
+
+    // Act
+
+    // Assert
+    EXPECT_THAT(false, Eq(true));
+}
+endsnippet

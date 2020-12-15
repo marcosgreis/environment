@@ -29,6 +29,11 @@ nnoremap zv :tabnext<CR>
 nnoremap zx :tabprev<CR>
 nnoremap zn :tabedit
 
+" diffs
+vnoremap ;dp :'<,'>diffput<CR>
+vnoremap ;dg :'<,'>diffget<CR>
+vnoremap ;du :diffupdate<CR>
+
 
 " Plugins
 filetype off
@@ -52,6 +57,9 @@ Plugin 'itchyny/lightline.vim'
 Plugin 'morhetz/gruvbox'
 Plugin 'r0mai/vim-djinni'
 Plugin 'majutsushi/tagbar'
+Plugin 'junegunn/vim-peekaboo'
+
+" - Experimental
 
 " Plugin 'grailbio/bazel-compilation-database'
 
@@ -116,6 +124,22 @@ let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-n>'
 
+" make YCM compatible with peekaboo
+let g:ycm_filetype_blacklist = {
+   \    'peekaboo': 1,
+   \    'notes': 1,
+   \    'markdown': 1,
+   \    'netrw': 1,
+   \    'unite': 1,
+   \    'pandoc': 1,
+   \    'tagbar': 1,
+   \    'mail': 1,
+   \    'vimwiki': 1,
+   \    'text': 1,
+   \    'infolog': 1
+   \}
+
+
 " better key bindings for UltiSnipsExpandTrigger
 let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
@@ -166,7 +190,7 @@ nmap ;s :Rg <cword><CR>
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 " Force highlights
-autocmd BufNewFile,BufRead *.mm   set syntax=objc
+autocmd BufNewFile,BufRead *.mm   set syntax=objcpp
 autocmd BufNewFile,BufRead *.BUILD   set syntax=bzl
 
 " Fix colors
@@ -184,4 +208,4 @@ highlight YcmWarningSection ctermbg=052
 " NeoVim adjusts
 set guicursor=
 
-command JsonPretty %!jq
+" command JsonPretty %!jq

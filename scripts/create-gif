@@ -1,0 +1,1 @@
+ffmpeg -i background1.mov -ss 00:00:00 -to 00:00:33 -s 600x400 -r 10 -f gif - | gifsicle --optimize=0 --delay=7 > background.gif

@@ -16,4 +16,5 @@ while fswatch -1 --exclude .git $DIR_OBS; do
     $SCRIPT
     echo "-----------------------------------------------------"
     echo "Waiting... "
+    sleep 0.2
 done

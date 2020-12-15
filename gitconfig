@@ -10,7 +10,7 @@
     s = status -s
 
 [core]
-    editor = vim
+    editor = nvim -u ~/.vimrc
     fileMode = false
 
 [color]

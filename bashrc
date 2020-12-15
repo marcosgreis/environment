@@ -86,7 +86,7 @@ function format_check()
     esac
     echo
     echo "--------------------------"
-    git s; read
+    git s; pause
     gitall
 }
 
@@ -111,11 +111,13 @@ alias gc='format_check; git commit'
 alias gcrev='gc -m"Code review"; push_check'
 alias gcam='gc --amend'
 alias gcwip='git commit -m"WIP"'
+alias gcm='git commit -m'
 alias gcfix='gc -m"Fix"; push_check'
 alias gt='git t'
 alias gs='git s'
 alias grm='git fetch --all; git rebase --interactive origin/master'
 alias grd='git fetch --all; git rebase --interactive origin/develop'
+alias gbm='git branch -a | grep marcos'
 
 function gtm()
 {
