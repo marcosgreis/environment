@@ -1,10 +1,11 @@
-if [ "$TMUX" == "" ]; then
+if [ "$TMUX" == "" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
     tmux
 fi
 
 alias ls='ls -G'
 alias ll='ls -l'
 alias vi='nvim -u ~/.vimrc'
+alias vim='nvim -u ~/.vimrc'
 
 function f() {
     find . -name "*${1}*"
@@ -69,7 +70,6 @@ if [ -f ~/environment/extra/bashrc ]; then
 fi
 
 alias notecheck=checknotes
-alias workcheck=checkwork
 
 function format_check()
 {
@@ -110,7 +110,7 @@ function push_check()
 alias gc='format_check; git commit'
 alias gcrev='gc -m"Code review"; push_check'
 alias gcam='gc --amend'
-alias gcwip='git commit -m"WIP"'
+alias gcwip='git commit --no-verify -m"WIP: $(git branch --show-current)"'
 alias gcm='git commit -m'
 alias gcfix='gc -m"Fix"; push_check'
 alias gt='git t'
@@ -118,6 +118,7 @@ alias gs='git s'
 alias grm='git fetch --all; git rebase --interactive origin/master'
 alias grd='git fetch --all; git rebase --interactive origin/develop'
 alias gbm='git branch -a | grep marcos'
+alias gocheck='goimports -w .; golint .'
 
 function gtm()
 {

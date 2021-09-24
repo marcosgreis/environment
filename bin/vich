@@ -2,4 +2,4 @@
 
 SCRIPT_TO_OPEN=$1
 
-vim $(which ${SCRIPT_TO_OPEN})
+nvim $(which ${SCRIPT_TO_OPEN})

@@ -20,7 +20,7 @@ check() {
         opt="n"
       ;;
       "e")
-        vim $FILE
+        nvim $FILE
       ;;
       "R")
         git checkout -- $FILE

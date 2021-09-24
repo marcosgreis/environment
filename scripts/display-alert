@@ -2,5 +2,6 @@
 
 TITLE="$1"
 MSG="$2"
+BUTTONS="$3"
 
 osascript -e "display alert \"$TITLE\" message \"$MSG\""

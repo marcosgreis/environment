@@ -1,7 +1,3 @@
-[user]
-	name = Marcos Reis
-	email = marcosgreis@gmail.com
-
 [alias]
     tree = log --graph --decorate --pretty=oneline --abbrev-commit
     files = show --name-only

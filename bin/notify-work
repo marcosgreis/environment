@@ -1,0 +1,15 @@
+#!/bin/bash
+
+WORK_LOG="/Users/marcos.goulartreis/work/work-log"
+
+if [ ! -f ${WORK_LOG} ]; then
+    mv ${WORK_LOG}.old ${WORK_LOG}
+fi
+
+WORK="$(cat ${WORK_LOG})"
+
+echo "$WORK"
+
+notify "Standup" "$WORK"
+
+mv ${WORK_LOG} ${WORK_LOG}.old

@@ -118,6 +118,7 @@ nmap ;g :YcmCompleter GoTo<CR>
 nmap ;u :YcmForceCompileAndDiagnostics<CR>
 nmap ;r :YcmRestartServer<CR>
 nmap ;f :YcmCompleter FixIt<CR>
+nmap ;e :YcmDiags<CR>
 
 " make YCM compatible with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -209,3 +210,7 @@ highlight YcmWarningSection ctermbg=052
 set guicursor=
 
 " command JsonPretty %!jq
+"
+
+source ~/environment/vimrc.extra
+source ~/extra.vim
