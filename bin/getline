@@ -1,0 +1,14 @@
+#!/bin/bash
+
+usage() {
+    echo "usage $0 <line_number> <file>"
+}
+
+if [ "$1" == "" ]; then
+    usage
+elif [ "$2" == "" ]; then
+    usage
+fi
+
+sed -n "$2p" < $1
+
