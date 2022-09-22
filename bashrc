@@ -6,6 +6,7 @@ alias ls='ls -G'
 alias ll='ls -l'
 alias vi='nvim -u ~/.vimrc'
 alias vim='nvim -u ~/.vimrc'
+alias cdf='cd `dirname $(fzf)`'
 
 function f() {
     find . -name "*${1}*"
@@ -74,18 +75,18 @@ alias notecheck=checknotes
 function format_check()
 {
     checknotes
-    echo "Do you want to run formatter? (y/N)"
-    read VALUE
-    case $VALUE in
-        "Y" )
-            formatter
-            ;;
-        "y" )
-            formatter
-            ;;
-    esac
-    echo
-    echo "--------------------------"
+    # echo "Do you want to run formatter? (y/N)"
+    # read VALUE
+    # case $VALUE in
+    #     "Y" )
+    #         formatter
+    #         ;;
+    #     "y" )
+    #         formatter
+    #         ;;
+    # esac
+    # echo
+    # echo "--------------------------"
     git s; pause
     gitall
 }
@@ -109,13 +110,13 @@ function push_check()
 
 alias gc='format_check; git commit'
 alias gcrev='gc -m"Code review"; push_check'
-alias gcam='gc --amend'
+alias gcam='gt -5; gc --amend'
 alias gcwip='git commit --no-verify -m"WIP: $(git branch --show-current)"'
 alias gcm='git commit -m'
 alias gcfix='gc -m"Fix"; push_check'
 alias gt='git t'
 alias gs='git s'
-alias grm='git fetch --all; git rebase --interactive origin/master'
+alias grm='git fetch --all; git rebase --interactive origin/main'
 alias grd='git fetch --all; git rebase --interactive origin/develop'
 alias gbm='git branch -a | grep marcos'
 alias gocheck='goimports -w .; golint .'
@@ -132,3 +133,17 @@ set_prompt
 
 export FZF_DEFAULT_COMMAND='rg --files .'
 export HISTCONTROL=ignoredups
+
+# Eternal bash history.
+# ---------------------
+# Undocumented feature which sets the size to "unlimited".
+# http://stackoverflow.com/questions/9457233/unlimited-bash-history
+export HISTFILESIZE=
+export HISTSIZE=
+export HISTTIMEFORMAT="[%F %T] "
+# Change the file location because certain bash sessions truncate .bash_history file upon close.
+# http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
+export HISTFILE=~/.bash_eternal_history
+# Force prompt to write history after every command.
+# http://superuser.com/questions/20900/bash-history-loss
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"

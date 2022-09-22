@@ -1,0 +1,11 @@
+#/bin/bash
+
+DATE="$(date +'%Y%m%d')"
+
+BRANCH_NAME="$USER/$1/$DATE"
+
+echo "Creating branch '$BRANCH_NAME'"
+pause
+
+git checkout -b $BRANCH_NAME
+

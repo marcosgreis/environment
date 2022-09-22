@@ -50,6 +50,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'tpope/vim-commentary'
 Plugin 'easymotion/vim-easymotion'
+Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 Plugin 'jremmen/vim-ripgrep'
 Plugin 'tpope/vim-fugitive'
@@ -75,8 +76,8 @@ set ruler
 set laststatus=2
 
 set expandtab
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set nu
 
 " F-keys
@@ -177,7 +178,7 @@ autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
 " Fuzzy finder
 nmap ;; :Files<CR>
 nmap ;b :Buffer<CR>
-set rtp+=/usr/local/opt/fzf
+set rtp+=/opt/homebrew/bin/fzf
 set rtp+=~/.fzf
 
 " Quick fix window
@@ -213,4 +214,4 @@ set guicursor=
 "
 
 source ~/environment/vimrc.extra
-source ~/extra.vim
+" source ~/extra.vim

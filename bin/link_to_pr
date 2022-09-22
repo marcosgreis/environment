@@ -7,6 +7,6 @@ if [ "${REMOTE}" == "" ]; then
 fi
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
-remote="$(git remote get-url ${REMOTE} | sed 's/:/\//g' | sed 's/git@/https:\/\//g' | sed 's/\.git//g')"
+remote="$(git remote get-url ${REMOTE} | sed 's/:/\//g' | sed 's/.*@/https:\/\//g' | sed 's/\.git//g')"
 
 echo "${remote}/pull/new/${branch}"

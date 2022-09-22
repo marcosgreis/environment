@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "$1" | base64 --decode | protoc --decode_raw
+

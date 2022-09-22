@@ -1,13 +1,22 @@
 #!/bin/sh
 
-MGR_COUNT=`rg MGR | wc -l`
+MGR_COUNT=`rg "MGR" | wc -l`
 MGR_COUNT=`echo $MGR_COUNT`
 
+TD_COUNT=`rg "TODO\(marcos" | wc -l`
+TD_COUNT=`echo $TD_COUNT`
+
 COLOR="\033[0;31m" #red
+T_COLOR="\033[0;31m" #red
 
 if [ "${MGR_COUNT}" == "0" ]; then
     COLOR="\033[0;32m" #green
     MGR_COUNT=NO
 fi
+if [ "${TD_COUNT}" == "0" ]; then
+    T_COLOR="\033[0;32m" #green
+    TD_COUNT=NO
+fi
 
 echo "${COLOR}There are $MGR_COUNT MGR notes in code\033[0;0m"
+echo "${T_COLOR}There are $TD_COUNT TODO(marcos) notes in code\033[0;0m"

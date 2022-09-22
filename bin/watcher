@@ -11,10 +11,10 @@ $SCRIPT
 echo "-----------------------------------------------------"
 echo "Waiting... "
 
-while fswatch -1 --exclude .git $DIR_OBS; do
+while fswatch -1 --exclude .git --exclude .gradle $DIR_OBS; do
     echo "-----------------------------------------------------"
     $SCRIPT
     echo "-----------------------------------------------------"
     echo "Waiting... "
-    sleep 0.2
+    sleep 0.5
 done
