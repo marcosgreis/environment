@@ -108,18 +108,20 @@ function push_check()
     esac
 }
 
-alias gc='format_check; git commit'
-alias gcrev='gc -m"Code review"; push_check'
-alias gcam='gt -5; gc --amend'
+# alias gmain='if grep -q "main" <<< "`git branch -r`" ; then echo "origin/main"; else echo "origin/master"; fi'
+alias gc='format_check && git commit'
+alias gcrev='gc -m"Code review" && push_check'
+alias gcam='gt -5 && gc --amend'
 alias gcwip='git commit --no-verify -m"WIP: $(git branch --show-current)"'
 alias gcm='git commit -m'
-alias gcfix='gc -m"Fix"; push_check'
+alias gcfix='gc -m"Fix" && push_check'
 alias gt='git t'
 alias gs='git s'
-alias grm='git fetch --all; git rebase --interactive origin/main'
-alias grd='git fetch --all; git rebase --interactive origin/develop'
+alias grm='git fetch --all && git rebase --interactive `gmain`'
+alias grd='git fetch --all && git rebase --interactive origin/develop'
 alias gbm='git branch -a | grep marcos'
 alias gocheck='goimports -w .; golint .'
+alias greset='gcwip -a; git fetch --all && git reset --hard `gmain`'
 
 function gtm()
 {

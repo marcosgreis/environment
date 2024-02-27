@@ -11,7 +11,7 @@ $SCRIPT
 echo "-----------------------------------------------------"
 echo "Waiting... "
 
-while fswatch -1 --exclude .git --exclude .gradle $DIR_OBS; do
+while fswatch -1 --exclude .git --exclude .gradle -i $DIR_OBS $DIR_OBS; do
     echo "-----------------------------------------------------"
     $SCRIPT
     echo "-----------------------------------------------------"

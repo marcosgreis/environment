@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MGR_COUNT=`rg "MGR" | wc -l`
+MGR_COUNT=`rg "\sMGR" | wc -l`
 MGR_COUNT=`echo $MGR_COUNT`
 
 TD_COUNT=`rg "TODO\(marcos" | wc -l`

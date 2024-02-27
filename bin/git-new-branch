@@ -2,7 +2,9 @@
 
 DATE="$(date +'%Y%m%d')"
 
-BRANCH_NAME="$USER/$1/$DATE"
+NAME="$(echo "$@" | sed 's/ /-/g')"
+
+BRANCH_NAME="$USER/$NAME/$DATE"
 
 echo "Creating branch '$BRANCH_NAME'"
 pause

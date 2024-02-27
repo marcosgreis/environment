@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if grep -q "origin/main" <<< "`git branch -r`"; then
+    echo "origin/main"
+else 
+    echo "origin/master"
+fi

@@ -9,4 +9,4 @@ fi
 branch="$(git rev-parse --abbrev-ref HEAD)"
 remote="$(git remote get-url ${REMOTE} | sed 's/:/\//g' | sed 's/.*@/https:\/\//g' | sed 's/\.git//g')"
 
-echo "${remote}/pull/new/${branch}"
+echo "${remote}/compare/${branch}?expand=1"

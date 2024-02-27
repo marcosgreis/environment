@@ -1,4 +1,9 @@
 #!/bin/bash
 
+if [[ "$1" == "" ]]; then
+    echo "Missing base64 encoded proto do decode"
+    exit 1
+fi
+
 echo "$1" | base64 --decode | protoc --decode_raw
 

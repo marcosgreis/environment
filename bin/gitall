@@ -36,14 +36,14 @@ check() {
 
 list_tracked="$(git diff --diff-filter=d --name-only)"
 list_untracked="$(git ls-files --others --exclude-standard)"
+list_complete=$(echo "$list_tracked
+$list_untracked" | sort | uniq)
+
 IFS="
 "
-for i in $list_tracked; do
-  check "$i"
-done
-
-for i in $list_untracked; do
+for i in $list_complete; do
   check "$i"
 done
 
 cd -
+
