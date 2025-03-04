@@ -59,7 +59,7 @@ function virg() {
 #export TERM=xterm-256color
 
 export EDITOR=/usr/local/bin/vim
-export PATH=~/environment/bin:/opt/local/bin:~/bin:$PATH
+export PATH=~/environment/bin:/opt/local/bin:~/bin:~/work/bin:$PATH
 
 source ~/environment/scripts/git-completion.bash
 source ~/environment/scripts/git-prompt.sh
@@ -75,6 +75,17 @@ alias notecheck=checknotes
 function format_check()
 {
     checknotes
+    if [[ "$CLEANER" != "" ]]; then
+        echo "cleaning..."
+        $CLEANER
+    fi
+    if [[ "$FORMATTER" != "" ]]; then
+        echo "formatting..."
+        $FORMATTER
+    else 
+        echo -e "\033[0;31mFORMATTER NOT SET\033[0;00m"
+    fi
+
     # echo "Do you want to run formatter? (y/N)"
     # read VALUE
     # case $VALUE in

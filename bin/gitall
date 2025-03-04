@@ -28,6 +28,7 @@ check() {
       ;;
      "d") 
         git rm -f $FILE 
+        rm $FILE
         opt="n"
     esac
   done

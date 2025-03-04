@@ -1,0 +1,9 @@
+#!/bin/bash
+
+clean() {
+  find ~/.gradle/native/ -type f -name "*.lock" -delete
+  find ~/.gradle/daemon/ -type f -name "*.lock" -delete
+  # find ~/.gradle/caches/ -type f -name "*.lock" -delete
+}
+
+time bin/gradle --stop && time clean
