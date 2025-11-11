@@ -11,7 +11,12 @@ check() {
   FILE="$1"
   while [ "$opt" != "n" ]; do
     clear
-    git diff "$FILE"
+    if [ -e "$FILE" ]; then
+      git diff "$FILE"
+    else
+      git s
+    fi
+
     printf "File '$FILE' - (a/e/R/d/n): "
     read opt
     case $opt in
@@ -34,7 +39,7 @@ check() {
 }
 
 
-list_tracked="$(git diff --diff-filter=d --name-only)"
+list_tracked="$(git diff --name-only)"
 list_untracked="$(git ls-files --others --exclude-standard)"
 list_complete=$(echo "$list_tracked
 $list_untracked" | sort | uniq)

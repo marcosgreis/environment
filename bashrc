@@ -7,6 +7,8 @@ alias ll='ls -l'
 alias vi='nvim -u ~/.vimrc'
 alias vim='nvim -u ~/.vimrc'
 alias cdf='cd `dirname $(fzf)`'
+alias cdw="cd /Users/$USER/work/\`find ~/work/ -maxdepth 3 | sed \"s/\\/Users\\/$USER\\/work\\///g\" | fzf\`"
+alias cdd="cd \`find . -maxdepth 3 | sed \"s/\\/Users\\/$USER\\/work\\///g\" | fzf\`"
 
 function f() {
     find . -name "*${1}*"
@@ -51,7 +53,7 @@ ps1_simple_version() {
 }
 
 function virg() {
-    files="`rg $1 -l`"
+    files="`rg "$1" -l`"
     vi -p $files
 }
 
@@ -112,7 +114,7 @@ function push_check()
 alias gc='format_check && git commit'
 alias gcrev='gc -m"Code review" && push_check'
 alias gcam='gt -5 && gc --amend'
-alias gcwip='git commit --no-verify -m"WIP: $(git branch --show-current)"'
+alias gcwip='git commit -m"WIP: $(git branch --show-current)"'
 alias gcm='git commit -m'
 alias gcfix='gc -m"Fix" && push_check'
 alias gt='git t'
