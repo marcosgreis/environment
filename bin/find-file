@@ -1,0 +1,8 @@
+#!/bin/bash 
+
+TEST_HEADER=${TPREFIX:-"Thoughts:"}
+DIR="${1:-thoughts}"
+
+value="$(find "$DIR" -type f | sort -r | grep -v ".git" | sed "s/00~//g" | sed "s/01~//g" | fzf --header "$TEST_HEADER" --header-border --header-first --color header:5)"
+
+echo -n "$value" | pbcopy

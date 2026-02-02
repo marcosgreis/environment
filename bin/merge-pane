@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tmux move-pane -t `tmux list-window | grep -v active | grep $TPREFIX | cut -d : -f 1`

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+find-file $@
+vi "$(pbpaste)"

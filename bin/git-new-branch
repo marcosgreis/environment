@@ -4,9 +4,15 @@ DATE="$(date +'%Y%m%d')"
 
 NAME="$(echo "$@" | sed 's/ /-/g')"
 
-BRANCH_NAME="$USER/$NAME/$DATE"
+# BRANCH_NAME="$USER.$NAME.$DATE"
+BRANCH_NAME="$USER.$NAME"
 
-echo "Creating branch '$BRANCH_NAME'"
+if [[ "${#BRANCH_NAME}" -gt 55 ]]; then
+  echo "Branch name is over 55 charaters: '$BRANCH_NAME ' (size: ${#BRANCH_NAME})"
+  exit 1
+fi
+
+echo "Creating branch '$BRANCH_NAME' (size: ${#BRANCH_NAME})"
 pause
 
 git checkout -b $BRANCH_NAME

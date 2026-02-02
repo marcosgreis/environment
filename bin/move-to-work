@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [[ "$TPREFIX" != "" ]];  then
+  NAME_CMD="-n $TPREFIX"
+fi
+
+
+tmux break-pane -t work $NAME_CMD
+

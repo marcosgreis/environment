@@ -2,6 +2,9 @@ if [ "$TMUX" == "" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
     tmux
 fi
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 alias ls='ls -G'
 alias ll='ls -l'
 alias vi='nvim -u ~/.vimrc'
@@ -12,6 +15,12 @@ alias cdd="cd \`find . -maxdepth 3 | sed \"s/\\/Users\\/$USER\\/work\\///g\" | f
 
 function f() {
     find . -name "*${1}*"
+}
+
+name_window()
+{
+    export TPREFIX="$1"
+    tmux rename-window "$TPREFIX"
 }
 
 git_color()
@@ -37,10 +46,16 @@ git_prompt() {
     echo "\$(git_color)"'$(__git_ps1)'
 }
 
+get_prefix() {
+    echo "\033[0;35m "'[$TPREFIX]'
+}
+
 set_prompt() {
     PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w \[\e[34m\]'
     PS1+="$(git_prompt)"
-    PS1+='\n\[\e[0m\]o/ '
+    PS1+="$(get_prefix)"
+    PS1+='\n\[\e[0m\]'
+    PS1+='o/ '
 
     export PS1
 }
@@ -65,8 +80,6 @@ export PATH=~/environment/bin:/opt/local/bin:~/bin:$PATH
 
 source ~/environment/scripts/git-completion.bash
 source ~/environment/scripts/git-prompt.sh
-
-source ~/.bazel/bin/bazel-complete.bash
 
 if [ -f ~/environment/extra/bashrc ]; then
     source ~/environment/extra/bashrc
@@ -113,11 +126,12 @@ function push_check()
 # alias gmain='if grep -q "main" <<< "`git branch -r`" ; then echo "origin/main"; else echo "origin/master"; fi'
 alias gc='format_check && git commit'
 alias gcrev='gc -m"Code review" && push_check'
-alias gcam='gt -5 && gc --amend'
+alias gcam='gtt -5 && gc --amend'
 alias gcwip='git commit -m"WIP: $(git branch --show-current)"'
 alias gcm='git commit -m'
 alias gcfix='gc -m"Fix" && push_check'
 alias gt='git t'
+alias gtt='git t'
 alias gs='git s'
 alias grm='git fetch --all && git rebase --interactive `gmain`'
 alias grd='git fetch --all && git rebase --interactive origin/develop'
@@ -128,7 +142,7 @@ alias greset='gcwip -a; git fetch --all && git reset --hard `gmain`'
 function gtm()
 {
     BRANCHES="$(git branch | awk '{ print $NF }')"
-    gt ${BRANCHES}
+    gtt ${BRANCHES}
 }
 
 set_prompt
