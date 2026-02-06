@@ -20,8 +20,17 @@ function f() {
 name_window()
 {
     export TPREFIX="$1"
+    export CMT_PREFIX="$1"
     tmux rename-window "$TPREFIX"
 }
+
+# Get and set the current window name if we are in a named window already
+if [[ -n "$TMUX" ]]; then
+    NAME="$(tmux display-message -p '#W')"
+    if [[ "$NAME" != "bash" ]]; then
+        name_window "$NAME"
+    fi
+fi
 
 git_color()
 {
