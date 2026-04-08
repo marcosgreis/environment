@@ -1,0 +1,216 @@
+#!/usr/bin/env bash
+
+# Claude Code Session Cost Summary
+# Usage: claude-costs [number_of_days] [--include-subagents]
+#
+# Detects model from each API response and applies per-model pricing.
+# Supported models: Opus 4.6, Sonnet 4.5, Haiku 4.5 (and variants).
+
+NUM_DAYS=${1:-7}
+INCLUDE_SUBAGENTS=false
+for arg in "$@"; do
+    [[ "$arg" == "--include-subagents" ]] && INCLUDE_SUBAGENTS=true
+done
+
+# Pricing reference (per million tokens):
+# Source: https://platform.claude.com/docs/en/about-claude/pricing
+#   Model         Input   CW-5m   CW-1h   CRead   Output
+#   Opus 4.6      $5.00   $6.25   $10.00  $0.50   $25.00
+#   Sonnet 4.5    $3.00   $3.75   $6.00   $0.30   $15.00
+#   Haiku 4.5     $1.00   $1.25   $2.00   $0.10   $5.00
+
+echo "=== Claude Code Session Cost Summary (Last $NUM_DAYS Days) ==="
+echo ""
+
+CUTOFF_DATE=$(date -v-${NUM_DAYS}d +%Y-%m-%d 2>/dev/null || date -d "${NUM_DAYS} days ago" +%Y-%m-%d 2>/dev/null)
+echo "Sessions from $CUTOFF_DATE to $(date +%Y-%m-%d)"
+if $INCLUDE_SUBAGENTS; then
+    echo "(including subagent sessions)"
+fi
+echo ""
+
+# Find session files
+if $INCLUDE_SUBAGENTS; then
+    SESSION_FILES=$(find ~/.claude/projects -name "*.jsonl" -type f -mtime -${NUM_DAYS} -exec ls -t {} + 2>/dev/null)
+else
+    SESSION_FILES=$(find ~/.claude/projects -name "*.jsonl" -type f ! -path "*/subagents/*" -mtime -${NUM_DAYS} -exec ls -t {} + 2>/dev/null)
+fi
+
+if [ -z "$SESSION_FILES" ]; then
+    echo "No session files found."
+    exit 1
+fi
+
+TOTAL_INPUT=0
+TOTAL_CACHE_CREATE_5M=0
+TOTAL_CACHE_CREATE_1H=0
+TOTAL_CACHE_READ=0
+TOTAL_OUTPUT=0
+TOTAL_COST=0
+SESSION_COUNT=0
+
+DAILY_SUMMARY=$(mktemp)
+MODEL_SUMMARY=$(mktemp)
+trap "rm -f $DAILY_SUMMARY $MODEL_SUMMARY" EXIT
+
+while IFS= read -r file; do
+    [ -z "$file" ] && continue
+
+    # Extract per-message model + usage, compute cost per message with correct pricing
+    SESSION_COST=$(jq -r '
+        select(.type == "assistant" and .message.usage != null and (.message.model | test("^claude-") )) |
+        [
+            .message.model // "unknown",
+            (.message.usage.input_tokens // 0),
+            (.message.usage.cache_creation.ephemeral_5m_input_tokens // .message.usage.cache_creation_input_tokens // 0),
+            (.message.usage.cache_creation.ephemeral_1h_input_tokens // 0),
+            (.message.usage.cache_read_input_tokens // 0),
+            (.message.usage.output_tokens // 0)
+        ] | @tsv
+    ' "$file" 2>/dev/null | awk '
+        BEGIN { total_cost = 0 }
+        {
+            model = $1; input = $2; cw5m = $3; cw1h = $4; cr = $5; output = $6
+
+            # Per-model pricing (per million tokens)
+            if (model ~ /^claude-opus-4-[56]/ || model ~ /^claude-opus-4-5/) {
+                ip = 5.00; cw5p = 6.25; cw1p = 10.00; crp = 0.50; op = 25.00
+            } else if (model ~ /^claude-opus-4-1/ || model == "claude-opus-4" || model ~ /^claude-opus-3/) {
+                ip = 15.00; cw5p = 18.75; cw1p = 30.00; crp = 1.50; op = 75.00
+            } else if (model ~ /^claude-sonnet-4-[56]/ || model ~ /^claude-sonnet-4-5/ || model == "claude-sonnet-4" || model ~ /^claude-sonnet-3-7/) {
+                ip = 3.00; cw5p = 3.75; cw1p = 6.00; crp = 0.30; op = 15.00
+            } else if (model ~ /^claude-haiku-4-5/) {
+                ip = 1.00; cw5p = 1.25; cw1p = 2.00; crp = 0.10; op = 5.00
+            } else if (model ~ /^claude-haiku-3-5/) {
+                ip = 0.80; cw5p = 1.00; cw1p = 1.60; crp = 0.08; op = 4.00
+            } else if (model ~ /^claude-haiku-3/) {
+                ip = 0.25; cw5p = 0.30; cw1p = 0.50; crp = 0.03; op = 1.25
+            } else {
+                ip = 3.00; cw5p = 3.75; cw1p = 6.00; crp = 0.30; op = 15.00
+            }
+
+            msg_cost = (input * ip + cw5m * cw5p + cw1h * cw1p + cr * crp + output * op) / 1000000
+            total_cost += msg_cost
+        }
+        END { printf "%.6f", total_cost }
+    ')
+
+    # Aggregate tokens per model for this session
+    jq -r '
+        select(.type == "assistant" and .message.usage != null and (.message.model | test("^claude-") )) |
+        [
+            .message.model // "unknown",
+            (.message.usage.input_tokens // 0),
+            (.message.usage.cache_creation.ephemeral_5m_input_tokens // .message.usage.cache_creation_input_tokens // 0),
+            (.message.usage.cache_creation.ephemeral_1h_input_tokens // 0),
+            (.message.usage.cache_read_input_tokens // 0),
+            (.message.usage.output_tokens // 0)
+        ] | @tsv
+    ' "$file" 2>/dev/null >> "$MODEL_SUMMARY"
+
+    # Sum tokens for totals
+    USAGE=$(jq -s '
+        [.[] | select(.type == "assistant" and .message.usage != null and (.message.model | test("^claude-") )) | .message.usage] |
+        {
+            input: ([.[].input_tokens // 0] | add // 0),
+            cache_5m: ([.[] | .cache_creation.ephemeral_5m_input_tokens // .cache_creation_input_tokens // 0] | add // 0),
+            cache_1h: ([.[] | .cache_creation.ephemeral_1h_input_tokens // 0] | add // 0),
+            cache_read: ([.[].cache_read_input_tokens // 0] | add // 0),
+            output: ([.[].output_tokens // 0] | add // 0)
+        }
+    ' "$file" 2>/dev/null)
+
+    INPUT=$(echo "$USAGE" | jq -r '.input // 0')
+    CACHE_5M=$(echo "$USAGE" | jq -r '.cache_5m // 0')
+    CACHE_1H=$(echo "$USAGE" | jq -r '.cache_1h // 0')
+    CACHE_READ=$(echo "$USAGE" | jq -r '.cache_read // 0')
+    OUTPUT=$(echo "$USAGE" | jq -r '.output // 0')
+
+    SESSION_DATE=$(jq -r 'select(.timestamp != null) | .timestamp' "$file" 2>/dev/null | head -1 | cut -dT -f1)
+    if [ -z "$SESSION_DATE" ] || [ "$SESSION_DATE" = "null" ]; then
+        SESSION_DATE=$(stat -f "%Sm" -t "%Y-%m-%d" "$file" 2>/dev/null || stat -c "%y" "$file" 2>/dev/null | cut -d' ' -f1)
+    fi
+
+    TOTAL_INPUT=$((TOTAL_INPUT + INPUT))
+    TOTAL_CACHE_CREATE_5M=$((TOTAL_CACHE_CREATE_5M + CACHE_5M))
+    TOTAL_CACHE_CREATE_1H=$((TOTAL_CACHE_CREATE_1H + CACHE_1H))
+    TOTAL_CACHE_READ=$((TOTAL_CACHE_READ + CACHE_READ))
+    TOTAL_OUTPUT=$((TOTAL_OUTPUT + OUTPUT))
+    TOTAL_COST=$(awk "BEGIN {print $TOTAL_COST + $SESSION_COST}")
+    SESSION_COUNT=$((SESSION_COUNT + 1))
+
+    echo "$SESSION_DATE|$SESSION_COST" >> "$DAILY_SUMMARY"
+
+done <<< "$SESSION_FILES"
+
+# Daily breakdown
+echo "Daily Breakdown:"
+if [ -f "$DAILY_SUMMARY" ]; then
+    awk -F'|' '{costs[$1] += $2; counts[$1]++}
+                END {
+                    for (date in costs) {
+                        printf "%s|%.4f|%d\n", date, costs[date], counts[date]
+                    }
+                }' "$DAILY_SUMMARY" | sort -r | while IFS='|' read -r date cost count; do
+        printf "  %s: \$%.4f (%d session%s)\n" "$date" "$cost" "$count" "$([ $count -eq 1 ] && echo "" || echo "s")"
+    done
+fi
+echo ""
+
+# Per-model breakdown
+echo "Per-Model Breakdown:"
+awk '{
+    model = $1; input = $2; cw5m = $3; cw1h = $4; cr = $5; output = $6
+
+    if (model ~ /^claude-opus-4-[56]/ || model ~ /^claude-opus-4-5/) {
+        ip = 5.00; cw5p = 6.25; cw1p = 10.00; crp = 0.50; op = 25.00
+    } else if (model ~ /^claude-opus-4-1/ || model == "claude-opus-4" || model ~ /^claude-opus-3/) {
+        ip = 15.00; cw5p = 18.75; cw1p = 30.00; crp = 1.50; op = 75.00
+    } else if (model ~ /^claude-sonnet-4-[56]/ || model ~ /^claude-sonnet-4-5/ || model == "claude-sonnet-4" || model ~ /^claude-sonnet-3-7/) {
+        ip = 3.00; cw5p = 3.75; cw1p = 6.00; crp = 0.30; op = 15.00
+    } else if (model ~ /^claude-haiku-4-5/) {
+        ip = 1.00; cw5p = 1.25; cw1p = 2.00; crp = 0.10; op = 5.00
+    } else if (model ~ /^claude-haiku-3-5/) {
+        ip = 0.80; cw5p = 1.00; cw1p = 1.60; crp = 0.08; op = 4.00
+    } else if (model ~ /^claude-haiku-3/) {
+        ip = 0.25; cw5p = 0.30; cw1p = 0.50; crp = 0.03; op = 1.25
+    } else {
+        ip = 3.00; cw5p = 3.75; cw1p = 6.00; crp = 0.30; op = 15.00
+    }
+
+    cost = (input * ip + cw5m * cw5p + cw1h * cw1p + cr * crp + output * op) / 1000000
+
+    # Normalize model name for grouping
+    if (model ~ /^claude-opus-4-6/)    name = "Opus 4.6"
+    else if (model ~ /^claude-opus-4-5/)    name = "Opus 4.5"
+    else if (model ~ /^claude-opus-4-1/)    name = "Opus 4.1"
+    else if (model ~ /^claude-sonnet-4-6/)  name = "Sonnet 4.6"
+    else if (model ~ /^claude-sonnet-4-5/)  name = "Sonnet 4.5"
+    else if (model ~ /^claude-haiku-4-5/)   name = "Haiku 4.5"
+    else if (model ~ /^claude-haiku-3-5/)   name = "Haiku 3.5"
+    else name = model
+
+    costs[name] += cost
+    msgs[name]++
+    tokens_in[name] += input + cw5m + cw1h + cr
+    tokens_out[name] += output
+}
+END {
+    for (name in costs) {
+        printf "  %-12s  $%.4f  (%d msgs, %dK in, %dK out)\n", name, costs[name], msgs[name], tokens_in[name]/1000, tokens_out[name]/1000
+    }
+}' "$MODEL_SUMMARY" | sort -t'$' -k2 -rn
+echo ""
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "TOTAL COST: \$$(printf '%.4f' $TOTAL_COST) ($SESSION_COUNT sessions)"
+echo ""
+echo "Token Summary:"
+printf "  Input tokens:          %'d\n" $TOTAL_INPUT
+printf "  Cache write (5m):      %'d\n" $TOTAL_CACHE_CREATE_5M
+printf "  Cache write (1h):      %'d\n" $TOTAL_CACHE_CREATE_1H
+printf "  Cache read tokens:     %'d\n" $TOTAL_CACHE_READ
+printf "  Output tokens:         %'d\n" $TOTAL_OUTPUT
+echo ""
+CACHE_PCT=$(awk "BEGIN {if ($TOTAL_CACHE_READ + $TOTAL_INPUT > 0) printf \"%.1f\", 100 * $TOTAL_CACHE_READ / ($TOTAL_CACHE_READ + $TOTAL_INPUT); else print 0}")
+echo "Cache efficiency: ${CACHE_PCT}% of input tokens served from cache"

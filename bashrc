@@ -24,6 +24,23 @@ name_window()
     tmux rename-window "$TPREFIX"
 }
 
+gwt()
+{
+    if [[ "$TPREFIX" == "" ]]; then
+      echo "TPREFIX is empty"
+      return
+    fi
+
+    WT_DIR="$HOME/work/wt/$TPREFIX"
+
+    if [[ ! -d "$WT_DIR" ]]; then
+      echo "worktree dir $WT_DIR doesn't exist or is not a directory"
+      return
+    fi
+
+    cd $WT_DIR
+}
+
 # Get and set the current window name if we are in a named window already
 if [[ -n "$TMUX" ]]; then
     NAME="$(tmux display-message -p '#W')"
@@ -37,17 +54,17 @@ git_color()
     local git_status="$(git status 2> /dev/null)"
 
     if [[ $git_status =~ "Changes to be committed" ]]; then
-        echo -e "\033[0;32m" # green
+        echo -e "\001\033[0;32m\002" # green
     elif [[ $git_status =~ "have diverged" ]]; then
-        echo -e "\033[0;37m" # gray
+        echo -e "\001\033[0;37m\002" # gray
     elif [[ $git_status =~ "Your branch is ahead of" ]]; then
-        echo -e "\033[0;37m" # gray
+        echo -e "\001\033[0;37m\002" # gray
     elif [[ ! $git_status =~ "working tree clean" ]]; then
-        echo -e "\033[0;31m" # red
+        echo -e "\001\033[0;31m\002" # red
     elif [[ $git_status =~ "nothing to commit" ]]; then
-        echo -e "\033[0;34m" # blue
+        echo -e "\001\033[0;34m\002" # blue
     else
-        echo -e "\033[0;33m" # yellow
+        echo -e "\001\033[0;33m\002" # yellow
     fi
 }
 
@@ -56,7 +73,7 @@ git_prompt() {
 }
 
 get_prefix() {
-    echo "\033[0;35m "'[$TPREFIX]'
+    echo "\001\033[0;35m\002 "'[$TPREFIX]'
 }
 
 set_prompt() {
@@ -174,3 +191,6 @@ export HISTFILE=~/.bash_eternal_history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+
+# agentic-camerata
+export CMT_COMMENT_TAG=MGR

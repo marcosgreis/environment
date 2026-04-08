@@ -6,16 +6,15 @@ NAME="$(echo "$@" | sed 's/ /-/g')"
 
 # BRANCH_NAME="$USER.$NAME.$DATE"
 BRANCH_NAME="$USER.$NAME"
+DIR_NAME_VISIBLE='~/work/wt/'$NAME
+DIR_NAME=~/work/wt/$NAME
 
 if [[ "${#BRANCH_NAME}" -gt 55 ]]; then
   echo "Branch name is over 55 charaters: '$BRANCH_NAME ' (size: ${#BRANCH_NAME})"
   exit 1
 fi
 
-
-echo "Creating branch '$BRANCH_NAME' (size: ${#BRANCH_NAME})"
+echo "Creating worktree '$BRANCH_NAME' at $DIR_NAME_VISIBLE (size: ${#BRANCH_NAME})"
 pause
 
-git checkout -b $BRANCH_NAME
-
-
+git worktree add -b $BRANCH_NAME $DIR_NAME && cd $DIR_NAME

@@ -62,8 +62,6 @@ Plugin 'junegunn/vim-peekaboo'
 
 " - Experimental
 
-" Plugin 'grailbio/bazel-compilation-database'
-
 call vundle#end()
 filetype plugin indent on
 
@@ -110,36 +108,36 @@ map FF <Plug>(easymotion-F)
 map <Leader> <Plug>(easymotion-prefix)
 
 " YCM
-let g:ycm_enable_diagnostic_signs = 0
-let g:ycm_extra_conf_globlist = ['~/*']
-let g:ycm_global_ycm_extra_conf = '~/work/.ycm_extra_conf.py'
+" let g:ycm_enable_diagnostic_signs = 0
+" let g:ycm_extra_conf_globlist = ['~/*']
+" let g:ycm_global_ycm_extra_conf = '~/work/.ycm_extra_conf.py'
 " let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/bazel-compilation-database/.ycm_extra_conf.py'
-nmap ;t :YcmCompleter GetType<CR>
-nmap ;g :YcmCompleter GoTo<CR>
-nmap ;u :YcmForceCompileAndDiagnostics<CR>
-nmap ;r :YcmRestartServer<CR>
-nmap ;f :YcmCompleter FixIt<CR>
-nmap ;e :YcmDiags<CR>
+" nmap ;t :YcmCompleter GetType<CR>
+" nmap ;g :YcmCompleter GoTo<CR>
+" nmap ;u :YcmForceCompileAndDiagnostics<CR>
+" nmap ;r :YcmRestartServer<CR>
+" nmap ;f :YcmCompleter FixIt<CR>
+" nmap ;e :YcmDiags<CR>
 
 " make YCM compatible with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
+" let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+" let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+" let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " make YCM compatible with peekaboo
-let g:ycm_filetype_blacklist = {
-   \    'peekaboo': 1,
-   \    'notes': 1,
-   \    'markdown': 1,
-   \    'netrw': 1,
-   \    'unite': 1,
-   \    'pandoc': 1,
-   \    'tagbar': 1,
-   \    'mail': 1,
-   \    'vimwiki': 1,
-   \    'text': 1,
-   \    'infolog': 1
-   \}
+" let g:ycm_filetype_blacklist = {
+"    \    'peekaboo': 1,
+"    \    'notes': 1,
+"    \    'markdown': 1,
+"    \    'netrw': 1,
+"    \    'unite': 1,
+"    \    'pandoc': 1,
+"    \    'tagbar': 1,
+"    \    'mail': 1,
+"    \    'vimwiki': 1,
+"    \    'text': 1,
+"    \    'infolog': 1
+"    \}
 
 
 " better key bindings for UltiSnipsExpandTrigger
@@ -163,15 +161,6 @@ let g:lightline = {
             \    }
             \}
 
-function! MyYcmCount()
-    " if &filetype !=# 'cpp'
-        return ''
-    " endif
-    " let eCount = youcompleteme#GetErrorCount()
-    " let wCount = youcompleteme#GetWarningCount()
-    " return 'E:' . eCount . ' W:' . wCount . ' |'
-endfunction
-
 " Commentary
 autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
 
@@ -188,9 +177,6 @@ nmap ;k :cprev<CR>
 " Quick search under cursor
 nmap ;s :Rg <cword><CR>
 
-" java stuff
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-
 " Force highlights
 autocmd BufNewFile,BufRead *.mm   set syntax=objcpp
 autocmd BufNewFile,BufRead *.BUILD   set syntax=bzl
@@ -199,12 +185,12 @@ autocmd BufNewFile,BufRead *.BUILD   set syntax=bzl
 let g:gruvbox_bold=0
 set background=dark
 colorscheme gruvbox
-highlight YcmErrorLine ctermbg=052
-highlight YcmErrorSign ctermbg=052
-highlight YcmErrorSection ctermbg=052
-highlight YcmWarningLine ctermbg=052
-highlight YcmWarningSign ctermbg=052
-highlight YcmWarningSection ctermbg=052
+" highlight YcmErrorLine ctermbg=052
+" highlight YcmErrorSign ctermbg=052
+" highlight YcmErrorSection ctermbg=052
+" highlight YcmWarningLine ctermbg=052
+" highlight YcmWarningSign ctermbg=052
+" highlight YcmWarningSection ctermbg=052
 " highlight Search cterm=NONE ctermfg=grey ctermbg=054
 
 " NeoVim adjusts

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cat << 'EOF'
+
+
+TTTTTTTTTTT  EEEEEEEEEEE   SSSSSSSSS   TTTTTTTTTTT            TTTTTTTTTTT  HHH     HHH  IIIIIIIIIII   SSSSSSSSS
+TTTTTTTTTTT  EEEEEEEEEEE  SSSSSSSSSSS  TTTTTTTTTTT            TTTTTTTTTTT  HHH     HHH  IIIIIIIIIII  SSSSSSSSSSS
+    TTT      EEE          SSS     SSS      TTT                    TTT      HHH     HHH      III      SSS     SSS
+    TTT      EEE          SSS              TTT                    TTT      HHH     HHH      III      SSS
+    TTT      EEE          SSS              TTT                    TTT      HHH     HHH      III      SSS
+    TTT      EEEEEEEE      SSSSSSSSS       TTT                    TTT      HHHHHHHHHHH      III       SSSSSSSSS
+    TTT      EEEEEEEE       SSSSSSSSS      TTT                    TTT      HHHHHHHHHHH      III        SSSSSSSSS
+    TTT      EEE                  SSS      TTT                    TTT      HHH     HHH      III              SSS
+    TTT      EEE                  SSS      TTT                    TTT      HHH     HHH      III              SSS
+    TTT      EEE          SSS     SSS      TTT                    TTT      HHH     HHH      III      SSS     SSS
+    TTT      EEEEEEEEEEE  SSSSSSSSSSS      TTT                    TTT      HHH     HHH  IIIIIIIIIII  SSSSSSSSSSS
+    TTT      EEEEEEEEEEE   SSSSSSSSS       TTT                    TTT      HHH     HHH  IIIIIIIIIII   SSSSSSSSS
+
+
+EOF
