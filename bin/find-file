@@ -1,8 +1,30 @@
-#!/bin/bash 
+#!/bin/bash
 
 TEST_HEADER=${TPREFIX:-"Thoughts:"}
 DIR="${1:-thoughts}"
 
-value="$(find "$DIR" -type f | sort -r | grep -v ".git" | sed "s/00~//g" | sed "s/01~//g" | fzf --header "$TEST_HEADER" --header-border --header-first --color header:5)"
+# Cross-platform creation-time stat
+if [[ "$OSTYPE" == darwin* ]]; then
+  get_ctime() { stat -f '%B' "$1" 2>/dev/null || echo 0; }
+else
+  get_ctime() { stat -c '%W' "$1" 2>/dev/null || echo 0; }
+fi
 
-echo -n "$value" | pbcopy
+# Sort by creation date ascending (newer at bottom)
+sorted=$(find "$DIR" -type f | grep -v "/\." | while IFS= read -r f; do
+  echo "$(get_ctime "$f")	$f"
+done | sort -rn | cut -f2-)
+
+value="$(echo "$sorted" | sed "s/00~//g" | sed "s/01~//g" | fzf --header "$TEST_HEADER" --header-border --header-first --color header:5)"
+
+# Copy to clipboard if available (bonus, not relied upon)
+if command -v pbcopy &>/dev/null; then
+  echo -n "$value" | pbcopy
+elif command -v xclip &>/dev/null; then
+  echo -n "$value" | xclip -selection clipboard
+elif command -v xsel &>/dev/null; then
+  echo -n "$value" | xsel --clipboard
+fi
+
+# Always output to stdout (primary channel)
+echo -n "$value"

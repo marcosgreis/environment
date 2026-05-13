@@ -197,7 +197,9 @@ colorscheme gruvbox
 set guicursor=
 
 " command JsonPretty %!jq
-"
+
+" disable mouse
+set mouse=
 
 source ~/environment/vimrc.extra
 " source ~/extra.vim

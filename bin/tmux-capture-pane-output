@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tmux capture-pane -ep -S - -t "%$1"

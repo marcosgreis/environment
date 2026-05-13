@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -e
+
+if [ -z "$1" ]; then
+    echo "Usage: archive-project <folder>"
+    echo "Example: archive-project pentest-2026.invest-74"
+    exit 1
+fi
+
+INPUT_DIR="$1"
+
+if [ ! -d "$INPUT_DIR" ]; then
+    echo "Error: Directory '$INPUT_DIR' does not exist"
+    exit 1
+fi
+
+HAS_THOUGHTS=false
+if [ -d "$INPUT_DIR/thoughts" ]; then
+    HAS_THOUGHTS=true
+    echo "=== Project thoughts directory ==="
+    tree "$INPUT_DIR/thoughts/"
+
+    read -p "Do you want to archive this project? (y/N) " confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Aborted."
+        exit 0
+    fi
+
+    echo "Archiving project..."
+
+    ARCHIVE_BASE="$HOME/work/wt/archive"
+    PROJECT_NAME="$(basename "$INPUT_DIR")"
+    ARCHIVE_DIR="$ARCHIVE_BASE/$PROJECT_NAME"
+
+    mkdir -p "$ARCHIVE_DIR"
+    cp -r "$INPUT_DIR/thoughts" "$ARCHIVE_DIR/"
+
+    echo "Archived to $ARCHIVE_DIR"
+
+    rm -f "$ARCHIVE_DIR/thoughts/summary.md"
+else
+    echo "No thoughts directory found in $INPUT_DIR"
+fi
+
+cd "$INPUT_DIR"
+INPUT_DIR_ABS="$(pwd)"
+BASE_GIT_DIR="$(git worktree list | head -1 | awk '{print $1}')"
+
+if [ "$INPUT_DIR_ABS" = "$BASE_GIT_DIR" ]; then
+    echo "Error: $INPUT_DIR is the main git directory, not a worktree. Will not remove."
+    exit 1
+fi
+
+read -p "Should $INPUT_DIR_ABS worktree be cleaned up from original base $BASE_GIT_DIR? (y/N) " cleanup_confirm
+if [[ "$cleanup_confirm" =~ ^[Yy]$ ]]; then
+    echo "Cleaning up worktree..."
+    cd "$BASE_GIT_DIR"
+    git worktree remove --force "$INPUT_DIR_ABS"
+    echo "Worktree removed."
+else
+    echo "Worktree cleanup skipped."
+fi
+
+if [ "$HAS_THOUGHTS" = true ]; then
+    cd "$ARCHIVE_DIR"
+    cmt new "follow ../summarize-archive.md"
+fi

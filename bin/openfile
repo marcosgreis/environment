@@ -1,4 +1,5 @@
 #!/bin/bash
 
-find-file $@
-vi "$(pbpaste)"
+selected=$(find-file "$@")
+[ -n "$selected" ] && glow --pager "$selected"
+# vi "$selected"

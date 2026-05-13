@@ -24,6 +24,13 @@ name_window()
     tmux rename-window "$TPREFIX"
 }
 
+name_window_restore()
+{
+    CURRENT_WINDOW=$(tmux display-message -p '#{window_name}')
+    export TPREFIX="$CURRENT_WINDOW"
+    export CMT_PREFIX="$CURRENT_WINDOW"
+}
+
 gwt()
 {
     if [[ "$TPREFIX" == "" ]]; then
@@ -107,8 +114,8 @@ export PATH=~/environment/bin:/opt/local/bin:~/bin:$PATH
 source ~/environment/scripts/git-completion.bash
 source ~/environment/scripts/git-prompt.sh
 
-if [ -f ~/environment/extra/bashrc ]; then
-    source ~/environment/extra/bashrc
+if [ -f ~/extrabashrc ]; then
+    source ~/extrabashrc
 fi
 
 alias notecheck=checknotes
