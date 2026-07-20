@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+  echo "Usage: ask-help <message>"
+  echo "Ask for help with the current tmux window and message."
+  exit 0
+fi
+
+CURRENT_WINDOW=$(tmux display-message -t "$TMUX_PANE" -p '#{window_index}:#{window_name}')
+
+printf '%s\t%s\t%s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$CURRENT_WINDOW" "$1" >> "$HOME/work/ask-help.log"
+notify "$CURRENT_WINDOW" "$1"

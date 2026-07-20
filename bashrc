@@ -48,6 +48,24 @@ gwt()
     cd $WT_DIR
 }
 
+mwt()
+{
+    if [[ "$TPREFIX" == "" ]]; then
+      echo "TPREFIX is empty"
+      return
+    fi
+
+    WT_DIR="$HOME/work/wt/$TPREFIX"
+
+    if [[ -d "$WT_DIR" ]]; then
+      echo "worktree dir $WT_DIR already exists"
+    fi
+
+    mkdir -p $WT_DIR/thoughts || true
+    touch $WT_DIR/thoughts/meta.md || true
+    cd $WT_DIR
+}
+
 # Get and set the current window name if we are in a named window already
 if [[ -n "$TMUX" ]]; then
     NAME="$(tmux display-message -p '#W')"

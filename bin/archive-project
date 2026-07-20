@@ -15,9 +15,7 @@ if [ ! -d "$INPUT_DIR" ]; then
     exit 1
 fi
 
-HAS_THOUGHTS=false
 if [ -d "$INPUT_DIR/thoughts" ]; then
-    HAS_THOUGHTS=true
     echo "=== Project thoughts directory ==="
     tree "$INPUT_DIR/thoughts/"
 
@@ -56,13 +54,11 @@ read -p "Should $INPUT_DIR_ABS worktree be cleaned up from original base $BASE_G
 if [[ "$cleanup_confirm" =~ ^[Yy]$ ]]; then
     echo "Cleaning up worktree..."
     cd "$BASE_GIT_DIR"
-    git worktree remove --force "$INPUT_DIR_ABS"
+    git worktree remove --force "$INPUT_DIR_ABS" || true
     echo "Worktree removed."
 else
     echo "Worktree cleanup skipped."
 fi
 
-if [ "$HAS_THOUGHTS" = true ]; then
-    cd "$ARCHIVE_DIR"
-    cmt new "follow ../summarize-archive.md"
-fi
+cd "$ARCHIVE_DIR"
+cmt new "follow ../summarize-archive.md"

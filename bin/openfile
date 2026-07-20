@@ -1,5 +1,5 @@
 #!/bin/bash
 
 selected=$(find-file "$@")
-[ -n "$selected" ] && glow --pager "$selected"
+[ -n "$selected" ] && glow --tui "$selected"
 # vi "$selected"
