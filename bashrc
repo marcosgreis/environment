@@ -62,7 +62,7 @@ mwt()
     fi
 
     mkdir -p $WT_DIR/thoughts || true
-    touch $WT_DIR/thoughts/meta.md || true
+    touch $WT_DIR/thoughts/context.md || true
     cd $WT_DIR
 }
 
