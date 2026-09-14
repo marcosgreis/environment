@@ -66,6 +66,48 @@ Plugin 'junegunn/vim-peekaboo'
 call vundle#end()
 filetype plugin indent on
 
+" Kotlin LSP: brew install JetBrains/utils/kotlin-lsp
+" Use Neovim's built-in client; only start in Gradle projects.
+if has('nvim-0.11') && executable('kotlin-lsp')
+lua << EOF
+vim.lsp.config('kotlin_lsp', {
+  cmd = { 'kotlin-lsp', '--stdio' },
+  filetypes = { 'kotlin' },
+  root_markers = {
+    { 'settings.gradle', 'settings.gradle.kts' },
+    { 'build.gradle', 'build.gradle.kts' },
+  },
+  workspace_required = true,
+  handlers = {
+    ['window/logMessage'] = function(err, message, ctx, config)
+      vim.lsp.handlers['window/logMessage'](err, message, ctx, config)
+      if message and message.type == vim.lsp.protocol.MessageType.Error then
+        vim.notify('Kotlin LSP: ' .. message.message, vim.log.levels.ERROR)
+      end
+    end,
+  },
+})
+vim.api.nvim_create_user_command('KotlinLspReload', function()
+  vim.lsp.enable('kotlin_lsp', false)
+  -- enable(false) only stops initialized clients on Neovim 0.12.
+  for _, client in ipairs(vim.lsp.get_clients({ name = 'kotlin_lsp', _uninitialized = true })) do
+    if not client.initialized then
+      client:stop(true)
+    end
+  end
+  local stopped = vim.wait(5000, function()
+    return #vim.lsp.get_clients({ name = 'kotlin_lsp', _uninitialized = true }) == 0
+  end, 100)
+  if not stopped then
+    vim.notify('Kotlin LSP did not stop; retry :KotlinLspReload', vim.log.levels.ERROR)
+    return
+  end
+  vim.lsp.enable('kotlin_lsp')
+end, { desc = 'Restart Kotlin LSP and reimport the Gradle project' })
+EOF
+command! KotlinLspLog lua vim.cmd.vsplit(vim.lsp.log.get_filename())
+endif
+
 set runtimepath+=~/.vim/my-snippets/
 
 " auto-formating
@@ -159,6 +201,42 @@ let g:lightline = {
             \    },
             \}
 
+if has('nvim-0.11')
+lua << EOF
+function _G.KotlinLspStatus()
+  if vim.bo.filetype ~= 'kotlin' then
+    return ''
+  end
+  local client = vim.lsp.get_clients({ bufnr = 0, name = 'kotlin_lsp', _uninitialized = true })[1]
+  if not client then
+    return 'Kotlin: not attached'
+  end
+  if not client.initialized then
+    return 'Kotlin: starting'
+  end
+  -- Pending tasks persist between reports, unlike vim.lsp.status() messages.
+  local tasks = vim.tbl_values(client.progress.pending)
+  table.sort(tasks)
+  -- Idle means no reported work, not necessarily a successful import.
+  return 'Kotlin: ' .. (#tasks > 0 and table.concat(tasks, ', ') or 'idle')
+end
+
+vim.api.nvim_create_autocmd({ 'LspProgress', 'LspAttach', 'LspDetach' }, {
+  group = vim.api.nvim_create_augroup('KotlinLspStatus', { clear = true }),
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client and client.name == 'kotlin_lsp' then
+      vim.schedule(function()
+        vim.cmd.redrawstatus()
+      end)
+    end
+  end,
+})
+EOF
+let g:lightline.component_function = {'kotlin_lsp': 'v:lua.KotlinLspStatus'}
+call add(g:lightline.active.left, ['kotlin_lsp'])
+endif
+
 " Commentary
 autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
 
@@ -201,3 +279,12 @@ set mouse=
 
 source ~/environment/vimrc.extra
 " source ~/extra.vim
+
+" Optional machine-local configuration, loaded before starting language servers.
+if filereadable(expand('~/.vimrc.extra'))
+  source ~/.vimrc.extra
+endif
+
+if has('nvim-0.11') && executable('kotlin-lsp')
+  lua vim.lsp.enable('kotlin_lsp')
+endif
