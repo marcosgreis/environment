@@ -42,7 +42,7 @@ call vundle#begin()
 
 " - Stable
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'ervandew/supertab'
+" Plugin 'ervandew/supertab'
 " Plugin 'SirVer/ultisnips'
 " Plugin 'honza/vim-snippets'
 " Plugin 'Valloric/YouCompleteMe'
@@ -61,6 +61,7 @@ Plugin 'majutsushi/tagbar'
 Plugin 'junegunn/vim-peekaboo'
 
 " - Experimental
+" Plugin 'neovim/nvim-lspconfig'
 
 call vundle#end()
 filetype plugin indent on
@@ -154,11 +155,8 @@ map za :NERDTreeToggle<CR>
 let g:lightline = {
             \    'active': {
             \      'left': [['mode', 'paste'], ['relativepath', 'modified']],
-            \      'right': [['lineinfo'], ['percent'], ['readonly'], ['filetype'], ['ycmCount']]
+            \      'right': [['lineinfo'], ['percent'], ['readonly'], ['filetype']]
             \    },
-            \    'component_function': {
-            \       'ycmCount': 'MyYcmCount'
-            \    }
             \}
 
 " Commentary
