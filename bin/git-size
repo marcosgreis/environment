@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -o pipefail
+
+git show --format= --numstat "$@" |
+  awk '($1 ~ /^[0-9]+$/ || $1 == "-") && ($2 ~ /^[0-9]+$/ || $2 == "-") {
+    added += $1
+    removed += $2
+  } END {
+    print "Added:", added + 0, "Removed:", removed + 0
+  }'

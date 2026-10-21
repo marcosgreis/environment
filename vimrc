@@ -61,6 +61,7 @@ Plugin 'majutsushi/tagbar'
 Plugin 'junegunn/vim-peekaboo'
 
 " - Experimental
+Plugin 'kevalin/mermaid.nvim'
 " Plugin 'neovim/nvim-lspconfig'
 
 call vundle#end()
@@ -277,9 +278,6 @@ set guicursor=
 " disable mouse
 set mouse=
 
-source ~/environment/vimrc.extra
-" source ~/extra.vim
-
 " Optional machine-local configuration, loaded before starting language servers.
 if filereadable(expand('~/.vimrc.extra'))
   source ~/.vimrc.extra
@@ -288,3 +286,26 @@ endif
 if has('nvim-0.11') && executable('kotlin-lsp')
   lua vim.lsp.enable('kotlin_lsp')
 endif
+
+" BEGIN optional LSP navigation bindings — remove this whole block to revert.
+" gd: definition | grr: references | gi: implementation | gh: documentation
+" Overrides normal-mode gi (last insert position) in LSP-attached buffers.
+if has('nvim-0.11')
+lua << EOF
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('OptionalLspNavigation', { clear = true }),
+  callback = function(event)
+    local function map(key, action, description)
+      vim.keymap.set('n', key, action, {
+        buffer = event.buf, silent = true, desc = description,
+      })
+    end
+    map('gd', vim.lsp.buf.definition, 'LSP: go to definition')
+    map('grr', vim.lsp.buf.references, 'LSP: find references')
+    map('gi', vim.lsp.buf.implementation, 'LSP: go to implementation')
+    map('gh', vim.lsp.buf.hover, 'LSP: hover documentation')
+  end,
+})
+EOF
+endif
+" END optional LSP navigation bindings.
