@@ -1,0 +1,110 @@
+# Asynchronous Git prompt for Bash. Source after git-prompt.sh and set_prompt.
+# Status is refreshed at most every two seconds and shown on the next prompt.
+[[ $- == *i* ]] || return 0
+if [[ -z ${__async_git_loaded-} ]]; then
+    __async_git_cache=$(mktemp -d "${TMPDIR:-/tmp}/async-git.XXXXXXXX") || return 0
+    __async_git_loaded=1
+    __async_git_pid=
+    __async_git_directory=
+    __async_git_updated=-2
+    __async_git_display=
+    __async_git_color=34
+fi
+
+__async_git_collect() (
+    local directory=$1 line xy branch staged= unstaged= untracked= conflict=
+    local ahead=0 behind=0 color=34 cached_directory=
+    # Publish branch information before the potentially expensive status scan.
+    # Keep the last complete status visible during subsequent refreshes.
+    unset GIT_PS1_SHOWDIRTYSTATE GIT_PS1_SHOWUNTRACKEDFILES
+    unset GIT_PS1_SHOWSTASHSTATE GIT_PS1_SHOWUPSTREAM GIT_PS1_SHOWCONFLICTSTATE
+    unset GIT_PS1_SHOWCOLORHINTS GIT_PS1_HIDE_IF_PWD_IGNORED
+    branch=$(__git_ps1 '%s')
+    if [[ -r $__async_git_cache/result ]]; then
+        IFS= read -r cached_directory < "$__async_git_cache/result"
+    fi
+    if [[ $cached_directory != "$directory" ]]; then
+        if [[ -n $branch ]]; then
+            printf '%s\n34\n (%s …)\n' "$directory" "$branch"
+        else
+            printf '%s\n34\n\n' "$directory"
+        fi > "$__async_git_cache/next"
+        mv -f "$__async_git_cache/next" "$__async_git_cache/result"
+    fi
+    # Allow Git to update its index/untracked cache, as ordinary git status does.
+    if ! git status --porcelain=v2 --branch \
+        --untracked-files=normal > "$__async_git_cache/status" 2>/dev/null; then
+        printf '%s\n%s\n%s\n' "$directory" 34 '' > "$__async_git_cache/next"
+        mv -f "$__async_git_cache/next" "$__async_git_cache/result"
+        return
+    fi
+    while IFS= read -r line; do
+        case $line in
+            '# branch.ab '*)
+                read -r ahead behind <<< "${line#\# branch.ab }"
+                ahead=${ahead#+}; behind=${behind#-}
+                ;;
+            '1 '*|'2 '*)
+                xy=${line:2:2}
+                [[ ${xy:0:1} == . ]] || staged=+
+                [[ ${xy:1:1} == . ]] || unstaged='*'
+                ;;
+            'u '*) conflict='!'; staged=+; unstaged='*' ;;
+            '? '*) untracked='?' ;;
+        esac
+    done < "$__async_git_cache/status"
+    # Re-read the branch in case it changed during the status scan.
+    branch=$(__git_ps1 '%s')
+    # Match the original git_color priority without adding status symbols.
+    if [[ -n $staged ]]; then color=32
+    elif [[ $ahead != 0 ]]; then color=37
+    elif [[ -n $unstaged$untracked$conflict ]]; then color=31
+    fi
+    printf '%s\n%s\n (%s)\n' "$directory" "$color" "$branch" > "$__async_git_cache/next"
+    mv -f "$__async_git_cache/next" "$__async_git_cache/result"
+)
+
+__async_git_prompt() {
+    local exit_status=$? directory color display
+    if [[ $__async_git_directory != "$PWD" ]]; then
+        __async_git_directory=$PWD
+        __async_git_display=
+        __async_git_color=34
+        __async_git_updated=-2
+    fi
+    if [[ -r $__async_git_cache/result ]]; then
+        {
+            IFS= read -r directory
+            IFS= read -r color
+            IFS= read -r display
+        } < "$__async_git_cache/result"
+        if [[ $directory == "$PWD" ]]; then
+            __async_git_display=$display
+            __async_git_color=$color
+        fi
+    fi
+    if { [[ -z $__async_git_pid ]] || ! kill -0 "$__async_git_pid" 2>/dev/null; } &&
+        (( SECONDS - __async_git_updated >= 2 )); then
+        __async_git_updated=$SECONDS
+        {
+            __async_git_collect "$PWD" </dev/null >/dev/null 2>&1 &
+            __async_git_pid=$!
+            # Suppress both job-start and completion notifications.
+            disown "$__async_git_pid"
+        } 2>/dev/null
+    fi
+    PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w '
+    PS1+="\[\e[${__async_git_color}m\]"
+    # Expand the cached branch as data, never as prompt command syntax.
+    PS1+='${__async_git_display}\[\e[35m\] [${TPREFIX-}]\n\[\e[0m\]o/ '
+    return "$exit_status"
+}
+
+# Preserve existing hooks, without duplicating ours when this file is reloaded.
+if [[ ${PROMPT_COMMAND[*]} != *'__async_git_prompt'* ]]; then
+    if [[ $(declare -p PROMPT_COMMAND 2>/dev/null) == 'declare -a '* ]]; then
+        PROMPT_COMMAND=(__async_git_prompt "${PROMPT_COMMAND[@]}")
+    else
+        PROMPT_COMMAND="__async_git_prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+    fi
+fi

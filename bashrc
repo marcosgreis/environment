@@ -197,6 +197,7 @@ function gtm()
 }
 
 set_prompt
+source ~/environment/bashrc.d/async-git
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
