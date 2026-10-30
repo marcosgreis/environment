@@ -248,6 +248,8 @@ set rtp+=/opt/homebrew/bin/fzf
 set rtp+=~/.fzf
 
 " Quick fix window
+nmap ;e :lua vim.diagnostic.setqflist({ open = true })<CR>
+nmap ;f :lua vim.lsp.buf.code_action()<CR>
 nmap ;l :cnext<CR>
 nmap ;k :cprev<CR>
 
