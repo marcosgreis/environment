@@ -1,3 +1,4 @@
+export PATH="/Users/marcosr/.openclaw/bin:$PATH"
 
 ## Imports
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

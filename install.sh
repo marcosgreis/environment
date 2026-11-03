@@ -110,6 +110,38 @@ check_command() {
     fi
 }
 
+# Clone a tmux plugin into ~/.tmux/plugins if it isn't already installed
+install_tmux_plugin() {
+    local name="$1"
+    local repo="$2"
+    local dest="$HOME_DIR/.tmux/plugins/$name"
+
+    # Already a git checkout, so this run is a no-op for this plugin
+    if [ -d "$dest/.git" ]; then
+        log_info "Already installed: $name"
+        return 0
+    fi
+
+    # Don't clone over a non-git path; move it out of the way first
+    if [ -e "$dest" ] || [ -L "$dest" ]; then
+        local backup="${dest}.backup.$(date +%s)"
+        if [ "$DRY_RUN" = true ]; then
+            log_action "Would back up $dest to $backup"
+        else
+            mv "$dest" "$backup"
+            log_action "Backed up existing path to $backup"
+        fi
+    fi
+
+    if [ "$DRY_RUN" = true ]; then
+        log_action "Would clone $repo → $dest"
+    else
+        log_action "Cloning $name..."
+        git clone --depth 1 "$repo" "$dest"
+        log_info "Installed: $name → $dest"
+    fi
+}
+
 echo "========================================"
 echo "Environment Install Script"
 echo "========================================"
@@ -119,6 +151,8 @@ echo ""
 echo "Checking dependencies..."
 check_command "nvim"
 check_command "tmux"
+check_command "git"
+check_command "curl"
 check_command "fzf"
 check_command "rg"
 check_command "goimports" "optional"
@@ -186,6 +220,16 @@ create_symlink "$REPO_DIR/ghostty-config" "$GHOSTTY_DIR/config"
 # mkdir -p "$HOME_DIR/.vim/my-snippets"
 # create_symlink "$REPO_DIR/vimsnippets/UltiSnips" "$HOME_DIR/.vim/my-snippets/UltiSnips"
 
+echo ""
+
+# Install tmux plugins referenced by tmux.conf
+echo "Installing tmux plugins..."
+TMUX_PLUGIN_DIR="$HOME_DIR/.tmux/plugins"
+if [ "$DRY_RUN" = false ]; then
+    mkdir -p "$TMUX_PLUGIN_DIR"
+fi
+install_tmux_plugin "tmux-gruvbox" "https://github.com/egel/tmux-gruvbox.git"
+install_tmux_plugin "tmux-agent-wizard" "https://github.com/27medkamal/tmux-agent-wizard.git"
 echo ""
 
 # Check for external dependencies

@@ -1,3 +1,4 @@
+export PATH="/Users/marcosr/.openclaw/bin:$PATH"
 if [ "$TMUX" == "" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
     tmux
 fi
