@@ -1,12 +1,15 @@
 export PATH="/Users/marcosr/.openclaw/bin:$PATH"
-if [ "$TMUX" == "" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
-    tmux
-fi
 
 export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
 
-alias ls='ls -G'
+if [[ "$(uname)" == "Darwin" ]]; then
+  export LC_ALL=en_US.UTF-8
+  alias ls='ls -G'
+else
+  alias ls='ls --color'
+fi
+
+
 alias ll='ls -l'
 alias vi='nvim -u ~/.vimrc'
 alias vim='nvim -u ~/.vimrc'
@@ -221,3 +224,7 @@ PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 # agentic-camerata
 export CMT_COMMENT_TAG=MGR
+
+if [ "$TMUX" == "" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
+    tmux
+fi
